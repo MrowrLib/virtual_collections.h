@@ -4,13 +4,6 @@
 
 #include "SpecHelper.h"  // IWYU pragma: keep
 
-struct Dog {
-    std::string _name;
-    Dog(std::string name) : _name(name) { _Log_("Dog {} is created", _name); }
-    ~Dog() { _Log_("Dog {} is destroyed", _name); }
-    std::string name() { return _name; }
-};
-
 Example("boolean key set") {
     auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
 
