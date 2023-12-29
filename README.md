@@ -28,9 +28,10 @@ void Example() {
       - [`vcpkg-configuration.json`](#vcpkg-configurationjson)
   - [Why?](#why)
   - [How?](#how)
-  - [Array](#array)
-  - [Map](#map)
-  - [Set](#set)
+  - [Collections](#collections)
+    - [Array](#array)
+    - [Map](#map)
+    - [Set](#set)
   - [License](#license)
 
 
@@ -115,11 +116,13 @@ And if you want to use `fmt`:
 
 ...
 
-## Array
+## Collections
 
-## Map
+### Array
 
-## Set
+### Map
+
+### Set
 
 ## License
 
