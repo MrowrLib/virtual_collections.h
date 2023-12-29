@@ -1,7 +1,5 @@
 #pragma once
 
-#include <void_pointer.h>
-
 #include <type_traits>
 
 #include "IVirtualCollection.h"
