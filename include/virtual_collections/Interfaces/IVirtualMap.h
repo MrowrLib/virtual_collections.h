@@ -51,11 +51,11 @@ namespace VirtualCollections {
             virtual void          remove(void* key)                      = 0;
         };
 
-        virtual IBooleanKeyMap*       bools()           = 0;
-        virtual IIntegralKeyMap*      ints()            = 0;
-        virtual IFloatingPointKeyMap* floating_points() = 0;
-        virtual IStringKeyMap*        strings()         = 0;
-        virtual IPointerKeyMap*       pointers()        = 0;
+        virtual IBooleanKeyMap*       bools()    = 0;
+        virtual IIntegralKeyMap*      ints()     = 0;
+        virtual IFloatingPointKeyMap* floats()   = 0;
+        virtual IStringKeyMap*        strings()  = 0;
+        virtual IPointerKeyMap*       pointers() = 0;
 
         /*
             Boolean Keys
@@ -105,14 +105,28 @@ namespace VirtualCollections {
             bools()->insert(key, element);
         }
 
-        template <typename TValue, std::enable_if_t<!std::is_pointer<TValue>::value, int> = 0>
-        TValue get(bool key) {
-            return *bools()->get(key)->template as<TValue>();
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_same<TKey, bool>::value && !std::is_floating_point<TKey>::value &&
+                    !std::is_pointer<TKey>::value && !std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) {
+            auto* ptr = bools()->get(key);
+            if (!ptr) return {};
+            auto value = ptr->template as<TValue>();
+            if (!value) return {};
+            return *value;
         }
 
-        template <typename TValue, std::enable_if_t<std::is_pointer<TValue>::value, int> = 0>
-        TValue get(bool key) {
-            auto ptr = bools()->get(key);
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_same<TKey, bool>::value && !std::is_pointer<TKey>::value &&
+                    !std::is_floating_point<TKey>::value && std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) {
+            auto* ptr = bools()->get(key);
             if (!ptr) return nullptr;
             return static_cast<TValue>(ptr->void_ptr());
         }
@@ -130,8 +144,8 @@ namespace VirtualCollections {
         template <
             typename TKey, typename TValue,
             std::enable_if_t<
-                std::conjunction<
-                    std::is_integral<TKey>, std::negation<std::is_same<TKey, bool>>>::value,
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    !std::is_same<TValue, const char*>::value,
                 int> = 0>
         void insert(TKey key, TValue* value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(value);
@@ -142,8 +156,8 @@ namespace VirtualCollections {
         template <
             typename TKey, typename TValue,
             std::enable_if_t<
-                std::conjunction<
-                    std::is_integral<TKey>, std::negation<std::is_same<TKey, bool>>>::value,
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    !std::is_pointer<TValue>::value,
                 int> = 0>
         void insert(TKey key, TValue&& value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(new TValue(std::forward<TValue>(value)));
@@ -151,34 +165,46 @@ namespace VirtualCollections {
             ints()->insert(key, element);
         }
 
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
+        void insert(TKey key, const char* value, bool destructable = true) {
+            char* copy = new char[strlen(value) + 1];
+#ifdef _WIN32
+            strcpy_s(copy, strlen(value) + 1, value);
+#else
+            strcpy(copy, value);
+#endif
+            auto* element = new VoidPointer<char>(copy);
+            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
+            ints()->insert(key, element);
+        }
+
         // get()
 
-        // template <
-        //     typename TKey, typename TValue,
-        //     std::enable_if_t<
-        //         !std::is_pointer<TValue>::value &&
-        //             std::conjunction<
-        //                 std::is_integral<TKey>, std::negation<std::is_same<TKey, bool>>>::value,
-        //         int> = 0>
-        template <typename TValue, std::enable_if_t<!std::is_pointer<TValue>::value, int> = 0>
-        TValue get(int key) {
-            auto ptr = ints()->get(key);
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    !std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) {
+            auto* ptr = ints()->get(key);
             if (!ptr) return {};
             auto value = ptr->template as<TValue>();
             if (!value) return {};
             return *value;
         }
 
-        // template <
-        //     typename TKey, typename TValue,
-        //     std::enable_if_t<
-        //         std::is_pointer<TValue>::value &&
-        //             std::conjunction<
-        //                 std::is_integral<TKey>, std::negation<std::is_same<TKey, bool>>>::value,
-        //         int> = 0>
-        template <typename TValue, std::enable_if_t<std::is_pointer<TValue>::value, int> = 0>
-        TValue get(int key) {
-            auto ptr = ints()->get(key);
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) {
+            auto* ptr = ints()->get(key);
             if (!ptr) return nullptr;
             return static_cast<TValue>(ptr->void_ptr());
         }
@@ -202,41 +228,77 @@ namespace VirtualCollections {
 
         template <
             typename TKey, typename TValue,
-            std::enable_if_t<std::is_floating_point<TKey>::value, int> = 0>
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    !std::is_same<TValue, const char*>::value,
+                int> = 0>
         void insert(TKey key, TValue* value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(value);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            floating_points()->insert(key, element);
+            floats()->insert(key, element);
         }
 
         template <
             typename TKey, typename TValue,
-            std::enable_if_t<std::is_floating_point<TKey>::value, int> = 0>
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    !std::is_pointer<TValue>::value,
+                int> = 0>
         void insert(TKey key, TValue&& value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(new TValue(std::forward<TValue>(value)));
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            floating_points()->insert(key, element);
+            floats()->insert(key, element);
+        }
+
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
+        void insert(TKey key, const char* value, bool destructable = true) {
+            char* copy = new char[strlen(value) + 1];
+#ifdef _WIN32
+            strcpy_s(copy, strlen(value) + 1, value);
+#else
+            strcpy(copy, value);
+#endif
+            auto* element = new VoidPointer<char>(copy);
+            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
+            floats()->insert(key, element);
         }
 
         // get()
 
-        template <typename T, std::enable_if_t<!std::is_pointer<T>::value, int> = 0>
-        T get(double key) {
-            return *floating_points()->get(key)->template as<T>();
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    !std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) {
+            auto* ptr = floats()->get(key);
+            if (!ptr) return {};
+            auto value = ptr->template as<TValue>();
+            if (!value) return {};
+            return *value;
         }
 
-        template <typename T, std::enable_if_t<std::is_pointer<T>::value, int> = 0>
-        T get(double key) {
-            auto ptr = floating_points()->get(key);
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) {
+            auto* ptr = floats()->get(key);
             if (!ptr) return nullptr;
-            return static_cast<T>(ptr->void_ptr());
+            return static_cast<TValue>(ptr->void_ptr());
         }
 
         // contains()
 
         template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
         bool contains(T key) {
-            return floating_points()->contains(key);
+            return floats()->contains(key);
         }
 
         /*
@@ -273,22 +335,18 @@ namespace VirtualCollections {
 
         // get()
 
-        template <
-            typename TKey, typename TValue,
-            std::enable_if_t<
-                !std::is_pointer<TValue>::value && std::negation<std::is_same<TKey, bool>>::value,
-                int> = 0>
+        template <typename TValue, std::enable_if_t<!std::is_pointer<TValue>::value, int> = 0>
         TValue get(const char* key) {
-            return *strings()->get(key)->template as<TValue>();
+            auto* ptr = strings()->get(key);
+            if (!ptr) return {};
+            auto value = ptr->template as<TValue>();
+            if (!value) return {};
+            return *value;
         }
 
-        template <
-            typename TKey, typename TValue,
-            std::enable_if_t<
-                std::is_pointer<TValue>::value && std::negation<std::is_same<TKey, bool>>::value,
-                int> = 0>
+        template <typename TValue, std::enable_if_t<std::is_pointer<TValue>::value, int> = 0>
         TValue get(const char* key) {
-            auto ptr = strings()->get(key);
+            auto* ptr = strings()->get(key);
             if (!ptr) return nullptr;
             return static_cast<TValue>(ptr->void_ptr());
         }
@@ -319,57 +377,44 @@ namespace VirtualCollections {
             pointers()->insert(key, element);
         }
 
+        template <typename TKey, std::enable_if_t<std::is_pointer<TKey>::value, int> = 0>
+        void insert(TKey key, const char* value, bool destructable = true) {
+            char* copy = new char[strlen(value) + 1];
+#ifdef _WIN32
+            strcpy_s(copy, strlen(value) + 1, value);
+#else
+            strcpy(copy, value);
+#endif
+            auto* element = new VoidPointer<char>(copy);
+            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
+            pointers()->insert(key, element);
+        }
+
         // get()
 
         template <
-            typename TKey, typename TValue,
+            typename TValue, typename TKey,
             std::enable_if_t<std::is_pointer<TKey>::value && !std::is_pointer<TValue>::value, int> =
                 0>
         TValue get(TKey key) {
-            // auto ptr = pointers()->get(key);
-            // if (!ptr) return {};
-            // auto value = ptr->template as<TValue>();
-            // if (!value) return {};
-            // return *value;
+            auto* ptr = pointers()->get(key);
+            if (!ptr) return {};
+            auto value = ptr->template as<TValue>();
+            if (!value) return {};
+            return *value;
             return {};
         }
 
         template <
-            typename TKey, typename TValue,
+            typename TValue, typename TKey,
             std::enable_if_t<std::is_pointer<TKey>::value && std::is_pointer<TValue>::value, int> =
                 0>
         TValue get(TKey key) {
-            // auto ptr = pointers()->get(key);
-            // if (!ptr) return nullptr;
-            // return static_cast<TValue>(ptr->void_ptr());
+            auto* ptr = pointers()->get(key);
+            if (!ptr) return nullptr;
+            return static_cast<TValue>(ptr->void_ptr());
             return nullptr;
         }
-
-        // template <
-        //     typename TKey, typename TValue,
-        //     std::enable_if_t<std::is_pointer<TKey>::value && !std::is_pointer<TValue>::value,
-        //     int> =
-        //         0>
-        // TValue get(TKey key) {
-        //     // auto ptr = pointers()->get(key);
-        //     // if (!ptr) return {};
-        //     // auto value = ptr->template as<TValue>();
-        //     // if (!value) return {};
-        //     // return *value;
-        //     return {};
-        // }
-
-        // template <
-        //     typename TKey, typename TValue,
-        //     std::enable_if_t<std::is_pointer<TKey>::value && std::is_pointer<TValue>::value, int>
-        //     =
-        //         0>
-        // TValue get(TKey key) {
-        //     // auto ptr = pointers()->get(key);
-        //     // if (!ptr) return nullptr;
-        //     // return static_cast<TValue>(ptr->void_ptr());
-        //     return nullptr;
-        // }
 
         // contains()
 

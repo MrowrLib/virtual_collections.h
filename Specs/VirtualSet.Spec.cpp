@@ -46,9 +46,9 @@
 //     // float
 
 //     AssertThat(set->contains(123.456), IsFalse());
-//     AssertThat(set->floating_points()->size(), Equals(0));
+//     AssertThat(set->floats()->size(), Equals(0));
 //     set->insert(123.456);
-//     AssertThat(set->floating_points()->size(), Equals(1));
+//     AssertThat(set->floats()->size(), Equals(1));
 //     AssertThat(set->contains(123.456), IsTrue());
 
 //     // string

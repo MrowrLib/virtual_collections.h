@@ -29,7 +29,7 @@ namespace VirtualCollections {
             return _ints.get();
         }
 
-        IFloatingPointKeyMap* floating_points() override {
+        IFloatingPointKeyMap* floats() override {
             if (!_floats) _floats = std::make_unique<Maps::FloatingPointKeyMap>();
             return _floats.get();
         }

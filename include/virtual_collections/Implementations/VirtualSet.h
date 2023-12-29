@@ -14,7 +14,7 @@ namespace VirtualCollections {
     class VirtualSet : public IVirtualSet {
         std::unique_ptr<IBooleanKeySet>       _bools;
         std::unique_ptr<IIntegralKeySet>      _ints;
-        std::unique_ptr<IFloatingPointKeySet> _floating_points;
+        std::unique_ptr<IFloatingPointKeySet> _floats;
         std::unique_ptr<IStringKeySet>        _strings;
         std::unique_ptr<IPointerKeySet>       _pointers;
 
@@ -29,9 +29,9 @@ namespace VirtualCollections {
             return _ints.get();
         }
 
-        IFloatingPointKeySet* floating_points() override {
-            if (!_floating_points) _floating_points = std::make_unique<Sets::FloatingPointKeySet>();
-            return _floating_points.get();
+        IFloatingPointKeySet* floats() override {
+            if (!_floats) _floats = std::make_unique<Sets::FloatingPointKeySet>();
+            return _floats.get();
         }
 
         IStringKeySet* strings() override {
@@ -46,14 +46,14 @@ namespace VirtualCollections {
 
         unsigned int size() const override {
             return (_bools ? _bools->size() : 0) + (_ints ? _ints->size() : 0) +
-                   (_floating_points ? _floating_points->size() : 0) +
-                   (_strings ? _strings->size() : 0) + (_pointers ? _pointers->size() : 0);
+                   (_floats ? _floats->size() : 0) + (_strings ? _strings->size() : 0) +
+                   (_pointers ? _pointers->size() : 0);
         }
 
         void foreach_element(ForEachElementFn* callback) const override {
             if (_bools) _bools->foreach_element(callback);
             if (_ints) _ints->foreach_element(callback);
-            if (_floating_points) _floating_points->foreach_element(callback);
+            if (_floats) _floats->foreach_element(callback);
             if (_strings) _strings->foreach_element(callback);
             if (_pointers) _pointers->foreach_element(callback);
         }
@@ -61,7 +61,7 @@ namespace VirtualCollections {
         void foreach_item(ForEachItemFn* callback) const override {
             if (_bools) _bools->foreach_item(callback);
             if (_ints) _ints->foreach_item(callback);
-            if (_floating_points) _floating_points->foreach_item(callback);
+            if (_floats) _floats->foreach_item(callback);
             if (_strings) _strings->foreach_item(callback);
             if (_pointers) _pointers->foreach_item(callback);
         }
@@ -69,7 +69,7 @@ namespace VirtualCollections {
         void clear() override {
             if (_bools) _bools->clear();
             if (_ints) _ints->clear();
-            if (_floating_points) _floating_points->clear();
+            if (_floats) _floats->clear();
             if (_strings) _strings->clear();
             if (_pointers) _pointers->clear();
         }

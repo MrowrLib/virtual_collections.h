@@ -35,7 +35,7 @@ namespace VirtualCollections {
 
         template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
         T get(unsigned int index) const {
-            auto ptr = get(index);
+            auto* ptr = get(index);
             if (!ptr) return nullptr;
             return static_cast<T>(ptr->void_ptr());
         }
@@ -53,7 +53,7 @@ namespace VirtualCollections {
 
         template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
         T first() const {
-            auto ptr = first();
+            auto* ptr = first();
             if (!ptr) return nullptr;
             return static_cast<T>(ptr->void_ptr());
         }
@@ -65,7 +65,7 @@ namespace VirtualCollections {
 
         template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
         T last() const {
-            auto ptr = last();
+            auto* ptr = last();
             if (!ptr) return nullptr;
             return static_cast<T>(ptr->void_ptr());
         }

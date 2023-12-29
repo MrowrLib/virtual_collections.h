@@ -41,11 +41,11 @@ namespace VirtualCollections {
             virtual void remove(void* key)   = 0;
         };
 
-        virtual IBooleanKeySet*       bools()           = 0;
-        virtual IIntegralKeySet*      ints()            = 0;
-        virtual IFloatingPointKeySet* floating_points() = 0;
-        virtual IStringKeySet*        strings()         = 0;
-        virtual IPointerKeySet*       pointers()        = 0;
+        virtual IBooleanKeySet*       bools()    = 0;
+        virtual IIntegralKeySet*      ints()     = 0;
+        virtual IFloatingPointKeySet* floats()   = 0;
+        virtual IStringKeySet*        strings()  = 0;
+        virtual IPointerKeySet*       pointers() = 0;
 
         /*
           Boolean Keys
@@ -99,14 +99,14 @@ namespace VirtualCollections {
 
         template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
         void insert(T value) {
-            floating_points()->insert(value);
+            floats()->insert(value);
         }
 
         // contains()
 
         template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
         bool contains(T value) {
-            return floating_points()->contains(value);
+            return floats()->contains(value);
         }
 
         /*
