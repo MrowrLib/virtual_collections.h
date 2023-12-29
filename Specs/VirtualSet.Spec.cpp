@@ -1,70 +1,65 @@
-// #define SPEC_GROUP VirtualSet
+#define SPEC_GROUP VirtualSet
 
-// #include <virtual_collections/set.h>
+#include <virtual_collections/set.h>
 
-// #include <memory>
+#include "SpecHelper.h"  // IWYU pragma: keep
 
-// #include "SpecHelper.h"  // IWYU pragma: keep
+struct Dog {
+    std::string _name;
+    Dog(std::string name) : _name(name) { _Log_("Dog {} is created", _name); }
+    ~Dog() { _Log_("Dog {} is destroyed", _name); }
+    std::string name() { return _name; }
+};
 
-// struct Dog {
-//     std::string _name;
-//     Dog(std::string name) : _name(name) { _Log_("Dog {} is created", _name); }
-//     ~Dog() { _Log_("Dog {} is destroyed", _name); }
-//     std::string name() { return _name; }
-// };
+Example("boolean key set") {
+    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
 
-// Example("usage example") {
-//     auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+    AssertThat(set->bools()->size(), Equals(0));
+    AssertThat(set->contains(true), IsFalse());
+    set->insert(true);
+    AssertThat(set->bools()->size(), Equals(1));
+    AssertThat(set->contains(true), IsTrue());
+}
 
-//     // bool
+Example("integer key set") {
+    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
 
-//     AssertThat(set->contains(true), IsFalse());
-//     AssertThat(set->contains(false), IsFalse());
-//     AssertThat(set->bools()->size(), Equals(0));
+    AssertThat(set->ints()->size(), Equals(0));
+    AssertThat(set->contains(123), IsFalse());
+    set->insert(123);
+    AssertThat(set->ints()->size(), Equals(1));
+    AssertThat(set->contains(123), IsTrue());
+}
 
-//     set->insert(true);
+Example("floating point key set") {
+    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
 
-//     AssertThat(set->bools()->size(), Equals(1));
-//     AssertThat(set->contains(true), IsTrue());
-//     AssertThat(set->contains(false), IsFalse());
+    AssertThat(set->floats()->size(), Equals(0));
+    AssertThat(set->contains(123.456), IsFalse());
+    set->insert(123.456);
+    AssertThat(set->floats()->size(), Equals(1));
+    AssertThat(set->contains(123.456), IsTrue());
+}
 
-//     // int
+Example("string key set") {
+    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
 
-//     AssertThat(set->contains(123), IsFalse());
-//     AssertThat(set->ints()->size(), Equals(0));
-//     set->insert(123);
-//     AssertThat(set->ints()->size(), Equals(1));
-//     AssertThat(set->contains(123), IsTrue());
+    AssertThat(set->strings()->size(), Equals(0));
+    AssertThat(set->contains("hello"), IsFalse());
+    set->insert("hello");
+    AssertThat(set->strings()->size(), Equals(1));
+    AssertThat(set->contains("hello"), IsTrue());
+}
 
-//     auto setaddress = reinterpret_cast<std::uintptr_t>(set.get());
-//     AssertThat(set->contains(setaddress), IsFalse());
-//     AssertThat(set->ints()->size(), Equals(1));
-//     set->insert(setaddress);
-//     AssertThat(set->ints()->size(), Equals(2));
-//     AssertThat(set->contains(setaddress), IsTrue());
+Example("pointer key set") {
+    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
 
-//     // float
+    auto  dog = std::make_shared<Dog>("Rover");
+    auto* ptr = dog.get();
 
-//     AssertThat(set->contains(123.456), IsFalse());
-//     AssertThat(set->floats()->size(), Equals(0));
-//     set->insert(123.456);
-//     AssertThat(set->floats()->size(), Equals(1));
-//     AssertThat(set->contains(123.456), IsTrue());
-
-//     // string
-
-//     AssertThat(set->contains("hello"), IsFalse());
-//     AssertThat(set->strings()->size(), Equals(0));
-//     set->insert("hello");
-//     AssertThat(set->strings()->size(), Equals(1));
-//     AssertThat(set->contains("hello"), IsTrue());
-
-//     // pointers
-
-//     auto dog = std::make_unique<Dog>("Fido");
-//     AssertThat(set->contains(dog.get()), IsFalse());
-//     AssertThat(set->pointers()->size(), Equals(0));
-//     set->insert(dog.get());
-//     AssertThat(set->pointers()->size(), Equals(1));
-//     AssertThat(set->contains(dog.get()), IsTrue());
-// }
+    AssertThat(set->pointers()->size(), Equals(0));
+    AssertThat(set->contains(ptr), IsFalse());
+    set->insert(ptr);
+    AssertThat(set->pointers()->size(), Equals(1));
+    AssertThat(set->contains(ptr), IsTrue());
+}

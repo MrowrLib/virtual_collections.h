@@ -53,17 +53,19 @@ namespace VirtualCollections {
 
         // insert()
 
-        template <typename T, std::enable_if_t<std::is_same<T, bool>::value, int> = 0>
-        void insert(T value, bool destructable = true) {
-            bools()->insert(value);
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_same<TKey, bool>::value && !std::is_floating_point<TKey>::value &&
+                    !std::is_pointer<TKey>::value,
+                int> = 0>
+        void insert(TKey key) {
+            bools()->insert(key);
         }
 
         // contains()
 
-        template <typename T, std::enable_if_t<std::is_same<T, bool>::value, int> = 0>
-        bool contains(T value) {
-            return bools()->contains(value);
-        }
+        bool contains(bool key) { return bools()->contains(key); }
 
         /*
             Integral Keys
@@ -72,12 +74,11 @@ namespace VirtualCollections {
         // insert()
 
         template <
-            typename T,
+            typename TKey,
             std::enable_if_t<
-                std::conjunction<std::is_integral<T>, std::negation<std::is_same<T, bool>>>::value,
-                int> = 0>
-        void insert(T value) {
-            ints()->insert(value);
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
+        void insert(TKey key) {
+            ints()->insert(key);
         }
 
         // contains()
@@ -87,8 +88,8 @@ namespace VirtualCollections {
             std::enable_if_t<
                 std::conjunction<std::is_integral<T>, std::negation<std::is_same<T, bool>>>::value,
                 int> = 0>
-        bool contains(T value) {
-            return ints()->contains(value);
+        bool contains(T key) {
+            return ints()->contains(key);
         }
 
         /*
@@ -97,16 +98,19 @@ namespace VirtualCollections {
 
         // insert()
 
-        template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
-        void insert(T value) {
-            floats()->insert(value);
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
+        void insert(TKey key) {
+            floats()->insert(key);
         }
 
         // contains()
 
         template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
-        bool contains(T value) {
-            return floats()->contains(value);
+        bool contains(T key) {
+            return floats()->contains(key);
         }
 
         /*
@@ -115,11 +119,11 @@ namespace VirtualCollections {
 
         // insert()
 
-        void insert(const char* value) { strings()->insert(value); }
+        void insert(const char* key) { strings()->insert(key); }
 
         // contains()
 
-        bool contains(const char* value) { return strings()->contains(value); }
+        bool contains(const char* key) { return strings()->contains(key); }
 
         /*
             Pointer Keys
@@ -127,16 +131,16 @@ namespace VirtualCollections {
 
         // insert()
 
-        template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
-        void insert(T value) {
-            pointers()->insert(value);
+        template <typename TKey, std::enable_if_t<std::is_pointer<TKey>::value, int> = 0>
+        void insert(TKey key) {
+            pointers()->insert(key);
         }
 
         // contains()
 
-        template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
-        bool contains(T value) {
-            return pointers()->contains(value);
+        template <typename T, std::enable_if_t<std::is_pointer<T>::value, int> = 0>
+        bool contains(T key) {
+            return pointers()->contains((void*)key);
         }
     };
 }
