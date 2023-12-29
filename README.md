@@ -17,6 +17,23 @@ void Example() {
 }
 ```
 
+- [`#include <virtual_collections.h>`](#include-virtual_collectionsh)
+  - [What?](#what)
+  - [Installation](#installation)
+    - [xmake](#xmake)
+      - [`xmake.lua`](#xmakelua)
+    - [vcpkg](#vcpkg)
+      - [`CMakeLists.txt`](#cmakeliststxt)
+      - [`vcpkg.json`](#vcpkgjson)
+      - [`vcpkg-configuration.json`](#vcpkg-configurationjson)
+  - [Why?](#why)
+  - [How?](#how)
+  - [Array](#array)
+  - [Map](#map)
+  - [Set](#set)
+  - [License](#license)
+
+
 ## What?
 
 ...
@@ -97,6 +114,12 @@ And if you want to use `fmt`:
 ## How?
 
 ...
+
+## Array
+
+## Map
+
+## Set
 
 ## License
 
