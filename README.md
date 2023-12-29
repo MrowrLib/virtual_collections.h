@@ -5,12 +5,12 @@
 
 void Example() {
     // Pure virtual interfaces
-    // can be shared across DLL boundaries
+    // that can be shared across DLL boundaries
     IVirtualArray* array = new VirtualArray();
     IVirtualMap*   map   = new VirtualMap();
     IVirtualSet*   set   = new Virtualinsert();
 
-    // Provide most of the functionality you'd expect
+    // The collections provide most of the functionality you'd expect
     array->push("Hello");
     map->insert("Hello", "World");
     set->insert("Hello");
