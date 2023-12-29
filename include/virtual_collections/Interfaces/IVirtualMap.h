@@ -12,43 +12,43 @@ namespace VirtualCollections {
         virtual ~IVirtualMap() = default;
 
         struct IBooleanKeyMap : public IVirtualCollection {
-            virtual ~IBooleanKeyMap()                                = default;
-            virtual void          set(bool key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(bool key)                      = 0;
-            virtual bool          has(bool key)                      = 0;
-            virtual void          remove(bool key)                   = 0;
+            virtual ~IBooleanKeyMap()                                   = default;
+            virtual void          insert(bool key, IVoidPointer* value) = 0;
+            virtual IVoidPointer* get(bool key)                         = 0;
+            virtual bool          has(bool key)                         = 0;
+            virtual void          remove(bool key)                      = 0;
         };
 
         struct IIntegralKeyMap : public IVirtualCollection {
-            virtual ~IIntegralKeyMap()                              = default;
-            virtual void          set(int key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(int key)                      = 0;
-            virtual bool          has(int key)                      = 0;
-            virtual void          remove(int key)                   = 0;
+            virtual ~IIntegralKeyMap()                                 = default;
+            virtual void          insert(int key, IVoidPointer* value) = 0;
+            virtual IVoidPointer* get(int key)                         = 0;
+            virtual bool          has(int key)                         = 0;
+            virtual void          remove(int key)                      = 0;
         };
 
         struct IFloatingPointKeyMap : public IVirtualCollection {
-            virtual ~IFloatingPointKeyMap()                            = default;
-            virtual void          set(double key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(double key)                      = 0;
-            virtual bool          has(double key)                      = 0;
-            virtual void          remove(double key)                   = 0;
+            virtual ~IFloatingPointKeyMap()                               = default;
+            virtual void          insert(double key, IVoidPointer* value) = 0;
+            virtual IVoidPointer* get(double key)                         = 0;
+            virtual bool          has(double key)                         = 0;
+            virtual void          remove(double key)                      = 0;
         };
 
         struct IStringKeyMap : public IVirtualCollection {
-            virtual ~IStringKeyMap()                                        = default;
-            virtual void          set(const char* key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(const char* key)                      = 0;
-            virtual bool          has(const char* key)                      = 0;
-            virtual void          remove(const char* key)                   = 0;
+            virtual ~IStringKeyMap()                                           = default;
+            virtual void          insert(const char* key, IVoidPointer* value) = 0;
+            virtual IVoidPointer* get(const char* key)                         = 0;
+            virtual bool          has(const char* key)                         = 0;
+            virtual void          remove(const char* key)                      = 0;
         };
 
         struct IPointerKeyMap : public IVirtualCollection {
-            virtual ~IPointerKeyMap()                                 = default;
-            virtual void          set(void* key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(void* key)                      = 0;
-            virtual bool          has(void* key)                      = 0;
-            virtual void          remove(void* key)                   = 0;
+            virtual ~IPointerKeyMap()                                    = default;
+            virtual void          insert(void* key, IVoidPointer* value) = 0;
+            virtual IVoidPointer* get(void* key)                         = 0;
+            virtual bool          has(void* key)                         = 0;
+            virtual void          remove(void* key)                      = 0;
         };
 
         virtual IBooleanKeyMap*       bools()           = 0;
@@ -61,24 +61,24 @@ namespace VirtualCollections {
             Boolean Keys
         */
 
-        // set()
+        // insert()
 
         template <
             typename TKey, typename TValue,
             std::enable_if_t<std::is_same<TKey, bool>::value, int> = 0>
-        void set(TKey key, TValue* value, bool destructable = true) {
+        void insert(TKey key, TValue* value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(value);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            bools()->set(key, element);
+            bools()->insert(key, element);
         }
 
         template <
             typename TKey, typename TValue,
             std::enable_if_t<std::is_same<TKey, bool>::value, int> = 0>
-        void set(TKey key, TValue&& value, bool destructable = true) {
+        void insert(TKey key, TValue&& value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(new TValue(std::forward<TValue>(value)));
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            bools()->set(key, element);
+            bools()->insert(key, element);
         }
 
         // get()
@@ -102,7 +102,7 @@ namespace VirtualCollections {
             Integral Keys
         */
 
-        // set()
+        // insert()
 
         template <
             typename TKey, typename TValue,
@@ -110,10 +110,10 @@ namespace VirtualCollections {
                 std::conjunction<
                     std::is_integral<TKey>, std::negation<std::is_same<TKey, bool>>>::value,
                 int> = 0>
-        void set(TKey key, TValue* value, bool destructable = true) {
+        void insert(TKey key, TValue* value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(value);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            ints()->set(key, element);
+            ints()->insert(key, element);
         }
 
         template <
@@ -122,10 +122,10 @@ namespace VirtualCollections {
                 std::conjunction<
                     std::is_integral<TKey>, std::negation<std::is_same<TKey, bool>>>::value,
                 int> = 0>
-        void set(TKey key, TValue&& value, bool destructable = true) {
+        void insert(TKey key, TValue&& value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(new TValue(std::forward<TValue>(value)));
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            ints()->set(key, element);
+            ints()->insert(key, element);
         }
 
         // get()
@@ -149,24 +149,24 @@ namespace VirtualCollections {
             Floating Point Keys
         */
 
-        // set()
+        // insert()
 
         template <
             typename TKey, typename TValue,
             std::enable_if_t<std::is_floating_point<TKey>::value, int> = 0>
-        void set(TKey key, TValue* value, bool destructable = true) {
+        void insert(TKey key, TValue* value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(value);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            floating_points()->set(key, element);
+            floating_points()->insert(key, element);
         }
 
         template <
             typename TKey, typename TValue,
             std::enable_if_t<std::is_floating_point<TKey>::value, int> = 0>
-        void set(TKey key, TValue&& value, bool destructable = true) {
+        void insert(TKey key, TValue&& value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(new TValue(std::forward<TValue>(value)));
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            floating_points()->set(key, element);
+            floating_points()->insert(key, element);
         }
 
         // get()
@@ -190,9 +190,9 @@ namespace VirtualCollections {
             String Keys
         */
 
-        // set()
+        // insert()
 
-        void set(const char* key, const char* value, bool destructable = true) {
+        void insert(const char* key, const char* value, bool destructable = true) {
             char* copy = new char[strlen(value) + 1];
 #ifdef _WIN32
             strcpy_s(copy, strlen(value) + 1, value);
@@ -201,14 +201,14 @@ namespace VirtualCollections {
 #endif
             auto* element = new VoidPointer<char>(copy);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            strings()->set(key, element);
+            strings()->insert(key, element);
         }
 
         template <typename TValue>
-        void set(const char* key, TValue* value, bool destructable = true) {
+        void insert(const char* key, TValue* value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(value);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            strings()->set(key, element);
+            strings()->insert(key, element);
         }
 
         template <
@@ -217,10 +217,10 @@ namespace VirtualCollections {
                 !std::is_floating_point<TKey>::value && !std::is_integral<TKey>::value &&
                     !std::is_same<TKey, bool>::value,
                 int> = 0>
-        void set(TKey key, TValue&& value, bool destructable = true) {
+        void insert(TKey key, TValue&& value, bool destructable = true) {
             auto* element = new VoidPointer<TValue>(new TValue(std::forward<TValue>(value)));
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
-            strings()->set(key, element);
+            strings()->insert(key, element);
         }
 
         // get()

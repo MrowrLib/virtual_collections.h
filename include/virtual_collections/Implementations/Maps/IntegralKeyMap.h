@@ -16,7 +16,7 @@ namespace VirtualCollections::Maps {
         }
 
         unsigned int  size() const override { return _map.size(); }
-        void          set(int key, IVoidPointer* value) override { _map[key] = value; }
+        void          insert(int key, IVoidPointer* value) override { _map[key] = value; }
         IVoidPointer* get(int key) override {
             auto it = _map.find(key);
             return it != _map.end() ? it->second : nullptr;
