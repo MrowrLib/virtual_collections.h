@@ -12,7 +12,6 @@ namespace VirtualCollections::Maps {
     public:
         ~IntegralKeyMap() override {
             for (auto& pair : _map) delete pair.second;
-            _map.clear();
         }
 
         unsigned int  size() const override { return _map.size(); }
@@ -21,7 +20,7 @@ namespace VirtualCollections::Maps {
             auto it = _map.find(key);
             return it != _map.end() ? it->second : nullptr;
         }
-        bool has(int key) override { return _map.find(key) != _map.end(); }
+        bool contains(int key) override { return _map.find(key) != _map.end(); }
         void remove(int key) override { _map.erase(key); }
         void clear() override { _map.clear(); }
         void foreach_element(IVirtualCollection::ForEachElementFn* callback) const override {

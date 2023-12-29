@@ -6,6 +6,8 @@
 
 #include "IVirtualCollection.h"
 
+// TODO: add all of the contains() calls :)
+
 namespace VirtualCollections {
 
     struct IVirtualMap : public virtual IVirtualCollection {
@@ -15,7 +17,7 @@ namespace VirtualCollections {
             virtual ~IBooleanKeyMap()                                   = default;
             virtual void          insert(bool key, IVoidPointer* value) = 0;
             virtual IVoidPointer* get(bool key)                         = 0;
-            virtual bool          has(bool key)                         = 0;
+            virtual bool          contains(bool key)                    = 0;
             virtual void          remove(bool key)                      = 0;
         };
 
@@ -23,7 +25,7 @@ namespace VirtualCollections {
             virtual ~IIntegralKeyMap()                                 = default;
             virtual void          insert(int key, IVoidPointer* value) = 0;
             virtual IVoidPointer* get(int key)                         = 0;
-            virtual bool          has(int key)                         = 0;
+            virtual bool          contains(int key)                    = 0;
             virtual void          remove(int key)                      = 0;
         };
 
@@ -31,7 +33,7 @@ namespace VirtualCollections {
             virtual ~IFloatingPointKeyMap()                               = default;
             virtual void          insert(double key, IVoidPointer* value) = 0;
             virtual IVoidPointer* get(double key)                         = 0;
-            virtual bool          has(double key)                         = 0;
+            virtual bool          contains(double key)                    = 0;
             virtual void          remove(double key)                      = 0;
         };
 
@@ -39,7 +41,7 @@ namespace VirtualCollections {
             virtual ~IStringKeyMap()                                           = default;
             virtual void          insert(const char* key, IVoidPointer* value) = 0;
             virtual IVoidPointer* get(const char* key)                         = 0;
-            virtual bool          has(const char* key)                         = 0;
+            virtual bool          contains(const char* key)                    = 0;
             virtual void          remove(const char* key)                      = 0;
         };
 
@@ -47,7 +49,7 @@ namespace VirtualCollections {
             virtual ~IPointerKeyMap()                                    = default;
             virtual void          insert(void* key, IVoidPointer* value) = 0;
             virtual IVoidPointer* get(void* key)                         = 0;
-            virtual bool          has(void* key)                         = 0;
+            virtual bool          contains(void* key)                    = 0;
             virtual void          remove(void* key)                      = 0;
         };
 
@@ -97,6 +99,8 @@ namespace VirtualCollections {
             if (!ptr) return nullptr;
             return static_cast<TValue>(ptr->void_ptr());
         }
+
+        // TODO contains()
 
         /*
             Integral Keys
@@ -236,6 +240,40 @@ namespace VirtualCollections {
             typename TValue, typename std::enable_if<std::is_pointer<TValue>::value, int>::type = 0>
         TValue get(const char* key) {
             auto ptr = strings()->get(key);
+            if (!ptr) return nullptr;
+            return static_cast<TValue>(ptr->void_ptr());
+        }
+
+        /*
+            Pointer Keys
+        */
+
+        // insert()
+
+        template <
+            typename TKey, typename TValue, std::enable_if_t<std::is_pointer<TKey>::value, int> = 0>
+        void insert(TKey key, TValue* value, bool destructable = true) {
+            auto* element = new VoidPointer<TValue>(value);
+            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
+            pointers()->insert((void*)key, element);
+        }
+
+        // get()
+
+        template <
+            typename TKey, typename TValue,
+            std::enable_if_t<std::is_pointer<TKey>::value && !std::is_pointer<TValue>::value, int> =
+                0>
+        TValue get(TKey key) {
+            return *pointers()->get((void*)key)->template as<TValue>();
+        }
+
+        template <
+            typename TKey, typename TValue,
+            std::enable_if_t<std::is_pointer<TKey>::value && std::is_pointer<TValue>::value, int> =
+                0>
+        TValue get(TKey key) {
+            auto ptr = pointers()->get((void*)key);
             if (!ptr) return nullptr;
             return static_cast<TValue>(ptr->void_ptr());
         }
