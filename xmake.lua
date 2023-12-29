@@ -1,6 +1,6 @@
 add_rules("mode.debug", "mode.releasedbg", "mode.release")
 
-set_languages("c++20")
+set_languages("c++17")
 
 add_repositories("MrowrLib https://github.com/MrowrLib/Packages")
 
