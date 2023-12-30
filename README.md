@@ -54,6 +54,7 @@ void Example() {
       - [`VirtualMap()` (_implementation_)](#virtualmap-implementation)
         - [`VirtualConstMap()` and `VirtualLazyMap()`](#virtualconstmap-and-virtuallazymap)
       - [`insert()`](#insert-1)
+      - [`erase()`](#erase-1)
       - [`get()`](#get)
       - [`contains()`](#contains)
       - [`size()`](#size-1)
@@ -63,6 +64,7 @@ void Example() {
       - [`VirtualSet()` (_implementation_)](#virtualset-implementation)
         - [`VirtualConstSet()` and `VirtualLazySet()`](#virtualconstset-and-virtuallazyset)
       - [`insert()`](#insert-2)
+      - [`erase()`](#erase-2)
       - [`contains()`](#contains-1)
       - [`size()`](#size-2)
       - [`clear()`](#clear-2)
@@ -258,7 +260,7 @@ map.insert("Pointer as value", pointerKey); // map DOES own pointerKey
 By default, the following will `delete` an owned pointer:
 
 - Calling `clear()` on any collection
-- Destroying an element via `remove()` (`IVirtualArray`) or `erase()` (`IVirtualMap`)
+- Destroying an element via `erase()`
 
 ### Configuring Value Ownership
 
@@ -475,6 +477,16 @@ map.insert("Hello", "World"); // const char*
 map.insert(new Dog(), "Dog"); // pointer
 ```
 
+#### `erase()`
+
+```cpp
+map.erase(true); // boolean
+map.erase(69);  // int
+map.erase(3.14); // double
+map.erase("Hello"); // const char*
+map.erase(new Dog()); // pointer
+```
+
 #### `get()`
 
 ```cpp
@@ -585,6 +597,16 @@ set.insert(69);  // int
 set.insert(3.14); // double
 set.insert("Hello World"); // const char*
 set.insert(new Dog()); // pointer
+```
+
+#### `erase()`
+
+```cpp
+set.erase(true); // boolean
+set.erase(69);  // int
+set.erase(3.14); // double
+set.erase("Hello World"); // const char*
+set.erase(new Dog()); // pointer
 ```
 
 #### `contains()`
