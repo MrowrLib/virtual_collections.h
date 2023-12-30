@@ -28,7 +28,7 @@ namespace VirtualCollections {
         }
 
         // TODO: bring back the regular prt = at()
-        IVoidPointer* pointer_at(unsigned int index) const override {
+        IVoidPointer* at(unsigned int index) const override {
             if (index < _elements.size()) return _elements[index];
             return nullptr;
         }

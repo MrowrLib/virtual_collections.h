@@ -4,24 +4,39 @@
 
 #include "SpecHelper.h"  // IWYU pragma: keep
 
-// Example("range based for loop") {
-//     std::vector<IVoidPointer*> values;
+Example("range based for loop") {
+    std::vector<IVoidPointer*> values;
 
-//     auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
+    auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
 
-//     array->push(123);
-//     array->push(456);
-//     array->push(789);
+    array->push(123);
+    array->push(456);
+    array->push(789);
 
-//     for (auto* element : *array.get()) values.push_back(element);
+    for (auto* element : *array.get()) values.push_back(element);
 
-//     AssertThat(values.size(), Equals(3));
-//     AssertThat(values[0]->as<int>(), Equals(123));
-//     AssertThat(values[1]->as<int>(), Equals(456));
-//     AssertThat(values[2]->as<int>(), Equals(789));
-// }
+    AssertThat(values.size(), Equals(3));
+    AssertThat(values[0]->as<int>(), Equals(123));
+    AssertThat(values[1]->as<int>(), Equals(456));
+    AssertThat(values[2]->as<int>(), Equals(789));
+}
 
-// TODO: a range based loop where the iterator is templated please :)
+Example("templated range based loop") {
+    std::vector<int> values;
+
+    auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
+
+    array->push(123);
+    array->push(456);
+    array->push(789);
+
+    for (auto element : array->iterable<int>()) values.push_back(element);
+
+    AssertThat(values.size(), Equals(3));
+    AssertThat(values[0], Equals(123));
+    AssertThat(values[1], Equals(456));
+    AssertThat(values[2], Equals(789));
+}
 
 Example("boolean value array") {
     auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());

@@ -10,38 +10,67 @@ namespace VirtualCollections {
         using ForEachIndexAndElementFn = IFunctionPointer<void(unsigned int, IVoidPointer*)>;
 
         class Iterator {
-            IVirtualArray* array;
-            unsigned int   index;
+            IVirtualArray* _array;
+            unsigned int   _index;
 
         public:
-            Iterator(IVirtualArray* array, unsigned int index) : array(array), index(index) {}
-
+            Iterator(IVirtualArray* array, unsigned int index) : _array(array), _index(index) {}
             Iterator& operator++() {
-                ++index;
+                ++_index;
                 return *this;
             }
-
             Iterator operator++(int) {
                 Iterator tmp = *this;
                 ++(*this);
                 return tmp;
             }
+            bool          operator==(const Iterator& rhs) const { return _index == rhs._index; }
+            bool          operator!=(const Iterator& rhs) const { return _index != rhs._index; }
+            IVoidPointer* operator*() const { return _array->at(_index); }
+        };
 
-            bool operator==(const Iterator& rhs) const { return index == rhs.index; }
+        template <typename T>
+        class TemplatedIterator {
+        private:
+            IVirtualArray* _array;
+            std::size_t    _index;
 
-            bool operator!=(const Iterator& rhs) const { return index != rhs.index; }
+        public:
+            TemplatedIterator(IVirtualArray* array, std::size_t index)
+                : _array(array), _index(index) {}
+            T                  operator*() const { return _array->template at<T>(_index); }
+            TemplatedIterator& operator++() {
+                ++_index;
+                return *this;
+            }
+            bool operator==(const TemplatedIterator& other) const { return _index == other._index; }
+            bool operator!=(const TemplatedIterator& other) const { return !(*this == other); }
+        };
 
-            IVoidPointer* operator*() const { return array->pointer_at(index); }
+        template <typename T>
+        class TemplatedIterable {
+        private:
+            IVirtualArray* _array;
+
+        public:
+            TemplatedIterable(IVirtualArray* array) : _array(array) {}
+            TemplatedIterator<T> begin() { return TemplatedIterator<T>(_array, 0); }
+            TemplatedIterator<T> end() { return TemplatedIterator<T>(_array, _array->size()); }
         };
 
         virtual ~IVirtualArray() = default;
 
-        virtual IVoidPointer* pointer_at(unsigned int index) const = 0;
-        virtual IVoidPointer* first() const                        = 0;
-        virtual IVoidPointer* last() const                         = 0;
+        virtual IVoidPointer* at(unsigned int index) const = 0;
+        virtual IVoidPointer* first() const                = 0;
+        virtual IVoidPointer* last() const                 = 0;
 
         Iterator begin() { return Iterator(this, 0); }
         Iterator end() { return Iterator(this, this->size()); }
+
+        template <typename T>
+        TemplatedIterable<T> iterable() {
+            return TemplatedIterable<T>(this);
+        }
 
         virtual void push_pointer(IVoidPointer*)                       = 0;
         virtual void insert_pointer(unsigned int index, IVoidPointer*) = 0;
@@ -57,20 +86,20 @@ namespace VirtualCollections {
 
         template <typename T, typename std::enable_if<!std::is_pointer<T>::value, int>::type = 0>
         T at(unsigned int index) const {
-            if (auto* element = pointer_at(index)) return element->as<T>();
+            if (auto* element = at(index)) return element->as<T>();
             return {};
         }
 
         template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
         T at(unsigned int index) const {
-            auto* ptr = pointer_at(index);
+            auto* ptr = at(index);
             if (!ptr) return nullptr;
             return ptr->as<T>();
         }
 
         template <>
         const char* at<const char*>(unsigned int index) const {
-            if (auto* element = this->pointer_at(index)) return element->as<const char*>();
+            if (auto* element = this->at(index)) return element->as<const char*>();
             return "";
         }
 
