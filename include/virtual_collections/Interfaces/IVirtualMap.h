@@ -50,9 +50,8 @@ namespace VirtualCollections {
                 std::is_same<TKey, bool>::value && !std::is_floating_point<TKey>::value &&
                     !std::is_pointer<TKey>::value,
                 int> = 0>
-        void insert(TKey key, TValue&& value, bool destructable = true) {
+        void insert(TKey key, TValue&& value) {
             auto* element = new VoidPointer(new TValue(std::forward<TValue>(value)));
-            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             bools()->insert(key, element);
         }
 
@@ -165,9 +164,8 @@ namespace VirtualCollections {
                 std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value &&
                     !std::is_pointer<TValue>::value,
                 int> = 0>
-        void insert(TKey key, TValue&& value, bool destructable = true) {
+        void insert(TKey key, TValue&& value) {
             auto* element = new VoidPointer(new TValue(std::forward<TValue>(value)));
-            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             ints()->insert(key, element);
         }
 
@@ -291,9 +289,8 @@ namespace VirtualCollections {
                 std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value &&
                     !std::is_pointer<TValue>::value,
                 int> = 0>
-        void insert(TKey key, TValue&& value, bool destructable = true) {
+        void insert(TKey key, TValue&& value) {
             auto* element = new VoidPointer(new TValue(std::forward<TValue>(value)));
-            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             floats()->insert(key, element);
         }
 
@@ -411,9 +408,8 @@ namespace VirtualCollections {
         }
 
         template <typename TValue>
-        void insert(const char* key, TValue&& value, bool destructable = true) {
+        void insert(const char* key, TValue&& value) {
             auto* element = new VoidPointer(new TValue(std::forward<TValue>(value)));
-            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             strings()->insert(key, element);
         }
 
@@ -472,9 +468,8 @@ namespace VirtualCollections {
 
         template <
             typename TKey, typename TValue, std::enable_if_t<std::is_pointer<TKey>::value, int> = 0>
-        void insert(TKey key, TValue&& value, bool destructable = true) {
+        void insert(TKey key, TValue&& value) {
             auto* element = new VoidPointer(new TValue(std::forward<TValue>(value)));
-            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             pointers()->insert(key, element);
         }
 

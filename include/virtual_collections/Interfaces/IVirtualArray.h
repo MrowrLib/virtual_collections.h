@@ -178,9 +178,8 @@ namespace VirtualCollections {
         }
 
         template <typename T>
-        void insert(unsigned int index, T&& value, bool destructable = true) {
+        void insert(unsigned int index, T&& value) {
             auto* element = new VoidPointer<T>(new T(std::forward<T>(value)));
-            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             this->insert_pointer(index, element);
         }
 
