@@ -11,37 +11,54 @@
 
 namespace VirtualCollections {
 
-    class VirtualSet : public IVirtualSet {
-        std::unique_ptr<IBooleanKeySet>       _bools;
-        std::unique_ptr<IIntegralKeySet>      _ints;
-        std::unique_ptr<IFloatingPointKeySet> _floats;
-        std::unique_ptr<IStringKeySet>        _strings;
-        std::unique_ptr<IPointerKeySet>       _pointers;
+    class VirtualLazySet : public IVirtualSet {
+        std::unique_ptr<Sets::IBooleanKeySet>       _bools    = nullptr;
+        std::unique_ptr<Sets::IIntegralKeySet>      _ints     = nullptr;
+        std::unique_ptr<Sets::IFloatingPointKeySet> _floats   = nullptr;
+        std::unique_ptr<Sets::IStringKeySet>        _strings  = nullptr;
+        std::unique_ptr<Sets::IPointerKeySet>       _pointers = nullptr;
 
     public:
-        IBooleanKeySet* bools() override {
+        Sets::IBooleanKeySet* bools() override {
             if (!_bools) _bools = std::make_unique<Sets::BooleanKeySet>();
             return _bools.get();
         }
-
-        IIntegralKeySet* ints() override {
+        Sets::IIntegralKeySet* ints() override {
             if (!_ints) _ints = std::make_unique<Sets::IntegralKeySet>();
             return _ints.get();
         }
-
-        IFloatingPointKeySet* floats() override {
+        Sets::IFloatingPointKeySet* floats() override {
             if (!_floats) _floats = std::make_unique<Sets::FloatingPointKeySet>();
             return _floats.get();
         }
-
-        IStringKeySet* strings() override {
+        Sets::IStringKeySet* strings() override {
             if (!_strings) _strings = std::make_unique<Sets::StringKeySet>();
             return _strings.get();
         }
-
-        IPointerKeySet* pointers() override {
+        Sets::IPointerKeySet* pointers() override {
             if (!_pointers) _pointers = std::make_unique<Sets::PointerKeySet>();
             return _pointers.get();
+        }
+
+        const Sets::IBooleanKeySet* bools() const override {
+            if (_bools) return _bools.get();
+            else return nullptr;
+        }
+        const Sets::IIntegralKeySet* ints() const override {
+            if (_ints) return _ints.get();
+            else return nullptr;
+        }
+        const Sets::IFloatingPointKeySet* floats() const override {
+            if (_floats) return _floats.get();
+            else return nullptr;
+        }
+        const Sets::IStringKeySet* strings() const override {
+            if (_strings) return _strings.get();
+            else return nullptr;
+        }
+        const Sets::IPointerKeySet* pointers() const override {
+            if (_pointers) return _pointers.get();
+            else return nullptr;
         }
 
         unsigned int size() const override {

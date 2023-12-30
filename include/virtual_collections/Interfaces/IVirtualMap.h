@@ -2,6 +2,11 @@
 
 #include <type_traits>
 
+#include "IBooleanKeyMap.h"
+#include "IFloatingPointKeyMap.h"
+#include "IIntegralKeyMap.h"
+#include "IPointerKeyMap.h"
+#include "IStringKeyMap.h"
 #include "IVirtualCollection.h"
 
 namespace VirtualCollections {
@@ -9,51 +14,17 @@ namespace VirtualCollections {
     struct IVirtualMap : public virtual IVirtualCollection {
         virtual ~IVirtualMap() = default;
 
-        struct IBooleanKeyMap : public IVirtualCollection {
-            virtual ~IBooleanKeyMap()                                   = default;
-            virtual void          insert(bool key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(bool key)                         = 0;
-            virtual bool          contains(bool key)                    = 0;
-            virtual void          remove(bool key)                      = 0;
-        };
+        virtual Maps::IBooleanKeyMap*       bools()    = 0;
+        virtual Maps::IIntegralKeyMap*      ints()     = 0;
+        virtual Maps::IFloatingPointKeyMap* floats()   = 0;
+        virtual Maps::IStringKeyMap*        strings()  = 0;
+        virtual Maps::IPointerKeyMap*       pointers() = 0;
 
-        struct IIntegralKeyMap : public IVirtualCollection {
-            virtual ~IIntegralKeyMap()                                 = default;
-            virtual void          insert(int key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(int key)                         = 0;
-            virtual bool          contains(int key)                    = 0;
-            virtual void          remove(int key)                      = 0;
-        };
-
-        struct IFloatingPointKeyMap : public IVirtualCollection {
-            virtual ~IFloatingPointKeyMap()                               = default;
-            virtual void          insert(double key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(double key)                         = 0;
-            virtual bool          contains(double key)                    = 0;
-            virtual void          remove(double key)                      = 0;
-        };
-
-        struct IStringKeyMap : public IVirtualCollection {
-            virtual ~IStringKeyMap()                                           = default;
-            virtual void          insert(const char* key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(const char* key)                         = 0;
-            virtual bool          contains(const char* key)                    = 0;
-            virtual void          remove(const char* key)                      = 0;
-        };
-
-        struct IPointerKeyMap : public IVirtualCollection {
-            virtual ~IPointerKeyMap()                                    = default;
-            virtual void          insert(void* key, IVoidPointer* value) = 0;
-            virtual IVoidPointer* get(void* key)                         = 0;
-            virtual bool          contains(void* key)                    = 0;
-            virtual void          remove(void* key)                      = 0;
-        };
-
-        virtual IBooleanKeyMap*       bools()    = 0;
-        virtual IIntegralKeyMap*      ints()     = 0;
-        virtual IFloatingPointKeyMap* floats()   = 0;
-        virtual IStringKeyMap*        strings()  = 0;
-        virtual IPointerKeyMap*       pointers() = 0;
+        virtual const Maps::IBooleanKeyMap*       bools() const    = 0;
+        virtual const Maps::IIntegralKeyMap*      ints() const     = 0;
+        virtual const Maps::IFloatingPointKeyMap* floats() const   = 0;
+        virtual const Maps::IStringKeyMap*        strings() const  = 0;
+        virtual const Maps::IPointerKeyMap*       pointers() const = 0;
 
         /*
             Boolean Keys
@@ -103,6 +74,8 @@ namespace VirtualCollections {
             bools()->insert(key, element);
         }
 
+        // get()
+
         template <
             typename TValue, typename TKey,
             std::enable_if_t<
@@ -110,6 +83,18 @@ namespace VirtualCollections {
                     !std::is_pointer<TKey>::value && !std::is_pointer<TValue>::value,
                 int> = 0>
         TValue get(TKey key) {
+            auto* ptr = bools()->get(key);
+            if (!ptr) return {};
+            return ptr->template as<TValue>();
+        }
+
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_same<TKey, bool>::value && !std::is_floating_point<TKey>::value &&
+                    !std::is_pointer<TKey>::value && !std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) const {
             auto* ptr = bools()->get(key);
             if (!ptr) return {};
             return ptr->template as<TValue>();
@@ -127,9 +112,22 @@ namespace VirtualCollections {
             return ptr->template as<TValue>();
         }
 
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_same<TKey, bool>::value && !std::is_pointer<TKey>::value &&
+                    !std::is_floating_point<TKey>::value && std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) const {
+            auto* ptr = bools()->get(key);
+            if (!ptr) return nullptr;
+            return ptr->template as<TValue>();
+        }
+
         // contains()
 
         bool contains(bool key) { return bools()->contains(key); }
+        bool contains(bool key) const { return bools()->contains(key); }
 
         /*
             Integral Keys
@@ -195,9 +193,33 @@ namespace VirtualCollections {
             typename TValue, typename TKey,
             std::enable_if_t<
                 std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    !std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) const {
+            auto* ptr = ints()->get(key);
+            if (!ptr) return {};
+            return ptr->template as<TValue>();
+        }
+
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value &&
                     std::is_pointer<TValue>::value,
                 int> = 0>
         TValue get(TKey key) {
+            auto* ptr = ints()->get(key);
+            if (!ptr) return nullptr;
+            return ptr->template as<TValue>();
+        }
+
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) const {
             auto* ptr = ints()->get(key);
             if (!ptr) return nullptr;
             return ptr->template as<TValue>();
@@ -211,6 +233,15 @@ namespace VirtualCollections {
                 std::conjunction<std::is_integral<T>, std::negation<std::is_same<T, bool>>>::value,
                 int> = 0>
         bool contains(T key) {
+            return ints()->contains(key);
+        }
+
+        template <
+            typename T,
+            std::enable_if_t<
+                std::conjunction<std::is_integral<T>, std::negation<std::is_same<T, bool>>>::value,
+                int> = 0>
+        bool contains(T key) const {
             return ints()->contains(key);
         }
 
@@ -278,9 +309,33 @@ namespace VirtualCollections {
             typename TValue, typename TKey,
             std::enable_if_t<
                 std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    !std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) const {
+            auto* ptr = floats()->get(key);
+            if (!ptr) return {};
+            return ptr->template as<TValue>();
+        }
+
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value &&
                     std::is_pointer<TValue>::value,
                 int> = 0>
         TValue get(TKey key) {
+            auto* ptr = floats()->get(key);
+            if (!ptr) return nullptr;
+            return ptr->template as<TValue>();
+        }
+
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value &&
+                    std::is_pointer<TValue>::value,
+                int> = 0>
+        TValue get(TKey key) const {
             auto* ptr = floats()->get(key);
             if (!ptr) return nullptr;
             return ptr->template as<TValue>();
@@ -290,6 +345,11 @@ namespace VirtualCollections {
 
         template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
         bool contains(T key) {
+            return floats()->contains(key);
+        }
+
+        template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
+        bool contains(T key) const {
             return floats()->contains(key);
         }
 
@@ -334,8 +394,22 @@ namespace VirtualCollections {
             return ptr->template as<TValue>();
         }
 
+        template <typename TValue, std::enable_if_t<!std::is_pointer<TValue>::value, int> = 0>
+        TValue get(const char* key) const {
+            auto* ptr = strings()->get(key);
+            if (!ptr) return {};
+            return ptr->template as<TValue>();
+        }
+
         template <typename TValue, std::enable_if_t<std::is_pointer<TValue>::value, int> = 0>
         TValue get(const char* key) {
+            auto* ptr = strings()->get(key);
+            if (!ptr) return nullptr;
+            return ptr->template as<TValue>();
+        }
+
+        template <typename TValue, std::enable_if_t<std::is_pointer<TValue>::value, int> = 0>
+        TValue get(const char* key) const {
             auto* ptr = strings()->get(key);
             if (!ptr) return nullptr;
             return ptr->template as<TValue>();
@@ -344,6 +418,7 @@ namespace VirtualCollections {
         // contains()
 
         bool contains(const char* key) { return strings()->contains(key); }
+        bool contains(const char* key) const { return strings()->contains(key); }
 
         /*
             Pointer Keys
@@ -394,18 +469,43 @@ namespace VirtualCollections {
 
         template <
             typename TValue, typename TKey,
+            std::enable_if_t<std::is_pointer<TKey>::value && !std::is_pointer<TValue>::value, int> =
+                0>
+        TValue get(TKey key) const {
+            auto* ptr = pointers()->get(key);
+            if (!ptr) return {};
+            return ptr->template as<TValue>();
+        }
+
+        template <
+            typename TValue, typename TKey,
             std::enable_if_t<std::is_pointer<TKey>::value && std::is_pointer<TValue>::value, int> =
                 0>
         TValue get(TKey key) {
             auto* ptr = pointers()->get(key);
             if (!ptr) return nullptr;
-            return ptr->as<TValue>();
+            return ptr->template as<TValue>();
+        }
+
+        template <
+            typename TValue, typename TKey,
+            std::enable_if_t<std::is_pointer<TKey>::value && std::is_pointer<TValue>::value, int> =
+                0>
+        TValue get(TKey key) const {
+            auto* ptr = pointers()->get(key);
+            if (!ptr) return nullptr;
+            return ptr->template as<TValue>();
         }
 
         // contains()
 
         template <typename T, std::enable_if_t<std::is_pointer<T>::value, int> = 0>
         bool contains(T key) {
+            return pointers()->contains((void*)key);
+        }
+
+        template <typename T, std::enable_if_t<std::is_pointer<T>::value, int> = 0>
+        bool contains(T key) const {
             return pointers()->contains((void*)key);
         }
     };

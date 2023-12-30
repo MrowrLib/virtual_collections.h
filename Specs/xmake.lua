@@ -7,7 +7,8 @@ add_requires(
 
 target("Specs")
     set_kind("binary")
-    add_files("*.cpp")
+    add_files("Templates/*.cpp", "*.cpp")
+    add_includedirs(".")
     add_deps("virtual_collections")
     add_packages(
         "specs", "fmt",

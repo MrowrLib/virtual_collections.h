@@ -1,5 +1,5 @@
 #pragma once
 
-#include "Implementations/VirtualMap.h"  // IWYU pragma: keep
+#include "const_map.h"  // IWYU pragma: keep
 
-using namespace VirtualCollections;
+using VirtualMap = VirtualConstMap;

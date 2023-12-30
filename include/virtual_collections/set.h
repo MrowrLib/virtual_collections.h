@@ -1,5 +1,5 @@
 #pragma once
 
-#include "Implementations/VirtualSet.h"  // IWYU pragma: keep
+#include "const_set.h"  // IWYU pragma: keep
 
-using namespace VirtualCollections;
+using VirtualSet = VirtualConstSet;

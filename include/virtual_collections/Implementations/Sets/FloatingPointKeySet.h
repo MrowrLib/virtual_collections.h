@@ -6,13 +6,13 @@
 
 namespace VirtualCollections::Sets {
 
-    class FloatingPointKeySet : public IVirtualSet::IFloatingPointKeySet {
+    class FloatingPointKeySet : public IFloatingPointKeySet {
         collections_set<double> _set;
 
     public:
         unsigned int size() const override { return _set.size(); }
         void         insert(double key) override { _set.insert(key); }
-        bool         contains(double key) override { return _set.find(key) != _set.end(); }
+        bool         contains(double key) const override { return _set.find(key) != _set.end(); }
         void         remove(double key) override { _set.erase(key); }
         void         clear() override { _set.clear(); }
         void foreach_key_and_value(IVirtualCollection::ForEachElementFn* callback) const override {

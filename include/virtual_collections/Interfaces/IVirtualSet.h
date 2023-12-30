@@ -1,51 +1,28 @@
 #pragma once
 
+#include "IBooleanKeySet.h"
+#include "IFloatingPointKeySet.h"
+#include "IIntegralKeySet.h"
+#include "IPointerKeySet.h"
+#include "IStringKeySet.h"
 #include "IVirtualCollection.h"
+
 namespace VirtualCollections {
 
     struct IVirtualSet : public IVirtualCollection {
         virtual ~IVirtualSet() = default;
 
-        struct IBooleanKeySet : public IVirtualCollection {
-            virtual ~IBooleanKeySet()       = default;
-            virtual void insert(bool key)   = 0;
-            virtual bool contains(bool key) = 0;
-            virtual void remove(bool key)   = 0;
-        };
+        virtual Sets::IBooleanKeySet*       bools()    = 0;
+        virtual Sets::IIntegralKeySet*      ints()     = 0;
+        virtual Sets::IFloatingPointKeySet* floats()   = 0;
+        virtual Sets::IStringKeySet*        strings()  = 0;
+        virtual Sets::IPointerKeySet*       pointers() = 0;
 
-        struct IIntegralKeySet : public IVirtualCollection {
-            virtual ~IIntegralKeySet()     = default;
-            virtual void insert(int key)   = 0;
-            virtual bool contains(int key) = 0;
-            virtual void remove(int key)   = 0;
-        };
-
-        struct IFloatingPointKeySet : public IVirtualCollection {
-            virtual ~IFloatingPointKeySet()   = default;
-            virtual void insert(double key)   = 0;
-            virtual bool contains(double key) = 0;
-            virtual void remove(double key)   = 0;
-        };
-
-        struct IStringKeySet : public IVirtualCollection {
-            virtual ~IStringKeySet()               = default;
-            virtual void insert(const char* key)   = 0;
-            virtual bool contains(const char* key) = 0;
-            virtual void remove(const char* key)   = 0;
-        };
-
-        struct IPointerKeySet : public IVirtualCollection {
-            virtual ~IPointerKeySet()        = default;
-            virtual void insert(void* key)   = 0;
-            virtual bool contains(void* key) = 0;
-            virtual void remove(void* key)   = 0;
-        };
-
-        virtual IBooleanKeySet*       bools()    = 0;
-        virtual IIntegralKeySet*      ints()     = 0;
-        virtual IFloatingPointKeySet* floats()   = 0;
-        virtual IStringKeySet*        strings()  = 0;
-        virtual IPointerKeySet*       pointers() = 0;
+        virtual const Sets::IBooleanKeySet*       bools() const    = 0;
+        virtual const Sets::IIntegralKeySet*      ints() const     = 0;
+        virtual const Sets::IFloatingPointKeySet* floats() const   = 0;
+        virtual const Sets::IStringKeySet*        strings() const  = 0;
+        virtual const Sets::IPointerKeySet*       pointers() const = 0;
 
         /*
           Boolean Keys
@@ -66,6 +43,7 @@ namespace VirtualCollections {
         // contains()
 
         bool contains(bool key) { return bools()->contains(key); }
+        bool contains(bool key) const { return bools()->contains(key); }
 
         /*
             Integral Keys
@@ -92,6 +70,15 @@ namespace VirtualCollections {
             return ints()->contains(key);
         }
 
+        template <
+            typename T,
+            std::enable_if_t<
+                std::conjunction<std::is_integral<T>, std::negation<std::is_same<T, bool>>>::value,
+                int> = 0>
+        bool contains(T key) const {
+            return ints()->contains(key);
+        }
+
         /*
             Floating Point Keys
         */
@@ -113,6 +100,11 @@ namespace VirtualCollections {
             return floats()->contains(key);
         }
 
+        template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
+        bool contains(T key) const {
+            return floats()->contains(key);
+        }
+
         /*
             String Keys
         */
@@ -124,6 +116,7 @@ namespace VirtualCollections {
         // contains()
 
         bool contains(const char* key) { return strings()->contains(key); }
+        bool contains(const char* key) const { return strings()->contains(key); }
 
         /*
             Pointer Keys
@@ -140,6 +133,11 @@ namespace VirtualCollections {
 
         template <typename T, std::enable_if_t<std::is_pointer<T>::value, int> = 0>
         bool contains(T key) {
+            return pointers()->contains((void*)key);
+        }
+
+        template <typename T, std::enable_if_t<std::is_pointer<T>::value, int> = 0>
+        bool contains(T key) const {
             return pointers()->contains((void*)key);
         }
     };

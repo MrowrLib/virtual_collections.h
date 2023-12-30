@@ -1,6 +1,6 @@
-#define SPEC_GROUP VirtualMap
+#define SPEC_TEMPLATE Map_Examples
 
-#include <virtual_collections/map.h>
+#include <virtual_collections/virtual_map.h>
 
 #include "SpecHelper.h"  // IWYU pragma: keep
 
@@ -8,7 +8,7 @@ Example("templated foreach") {
     std::vector<int>    keys;
     std::vector<double> values;
 
-    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+    auto* map = current_test->var<IVirtualMap*>("map");
 
     map->insert(123, 456.789);
     map->insert(456, 123.456);
@@ -29,7 +29,7 @@ Example("templated foreach only key type") {
     std::vector<int>    keys;
     std::vector<double> values;
 
-    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+    auto* map = current_test->var<IVirtualMap*>("map");
 
     map->insert(123, 456.789);
     map->insert(456, 123.456);
@@ -50,7 +50,7 @@ Example("foreach IVoidPointer") {
     std::vector<int>    keys;
     std::vector<double> values;
 
-    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+    auto* map = current_test->var<IVirtualMap*>("map");
 
     map->insert(123, 456.789);
     map->insert(456, 123.456);
@@ -68,7 +68,7 @@ Example("foreach IVoidPointer") {
 }
 
 Example("boolean key map") {
-    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+    auto* map = current_test->var<IVirtualMap*>("map");
 
     // Value Type
     AssertThat(map->bools()->size(), Equals(0));
@@ -98,7 +98,7 @@ Example("boolean key map") {
 }
 
 Example("integer key map") {
-    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+    auto* map = current_test->var<IVirtualMap*>("map");
 
     // Value Type
     AssertThat(map->ints()->size(), Equals(0));
@@ -128,7 +128,7 @@ Example("integer key map") {
 }
 
 Example("floating point key map") {
-    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+    auto* map = current_test->var<IVirtualMap*>("map");
 
     // Value Type
     AssertThat(map->floats()->size(), Equals(0));
@@ -157,7 +157,7 @@ Example("floating point key map") {
 }
 
 Example("string key map") {
-    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+    auto* map = current_test->var<IVirtualMap*>("map");
 
     // Value Type
     AssertThat(map->strings()->size(), Equals(0));
@@ -187,7 +187,7 @@ Example("string key map") {
 }
 
 Example("pointer key map") {
-    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+    auto* map = current_test->var<IVirtualMap*>("map");
 
     auto  dog = std::unique_ptr<Dog>(new Dog("Rover"));
     auto* ptr = dog.get();

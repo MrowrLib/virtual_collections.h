@@ -1,13 +1,13 @@
-#define SPEC_GROUP VirtualSet
+#define SPEC_TEMPLATE Set_Examples
 
-#include <virtual_collections/set.h>
+#include <virtual_collections/virtual_set.h>
 
 #include "SpecHelper.h"  // IWYU pragma: keep
 
 Example("templated foreach") {
     std::vector<int> items;
 
-    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+    auto* set = current_test->var<IVirtualSet*>("set");
 
     set->insert(1);
     set->insert(2);
@@ -23,7 +23,7 @@ Example("templated foreach") {
 Example("foreach IVoidPointer") {
     std::vector<int> items;
 
-    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+    auto* set = current_test->var<IVirtualSet*>("set");
 
     set->insert(1);
     set->insert(2);
@@ -37,7 +37,7 @@ Example("foreach IVoidPointer") {
 }
 
 Example("boolean key set") {
-    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+    auto* set = current_test->var<IVirtualSet*>("set");
 
     AssertThat(set->bools()->size(), Equals(0));
     AssertThat(set->contains(true), IsFalse());
@@ -47,7 +47,7 @@ Example("boolean key set") {
 }
 
 Example("integer key set") {
-    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+    auto* set = current_test->var<IVirtualSet*>("set");
 
     AssertThat(set->ints()->size(), Equals(0));
     AssertThat(set->contains(123), IsFalse());
@@ -57,7 +57,7 @@ Example("integer key set") {
 }
 
 Example("floating point key set") {
-    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+    auto* set = current_test->var<IVirtualSet*>("set");
 
     AssertThat(set->floats()->size(), Equals(0));
     AssertThat(set->contains(123.456), IsFalse());
@@ -67,7 +67,7 @@ Example("floating point key set") {
 }
 
 Example("string key set") {
-    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+    auto* set = current_test->var<IVirtualSet*>("set");
 
     AssertThat(set->strings()->size(), Equals(0));
     AssertThat(set->contains("hello"), IsFalse());
@@ -77,7 +77,7 @@ Example("string key set") {
 }
 
 Example("pointer key set") {
-    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+    auto* set = current_test->var<IVirtualSet*>("set");
 
     auto  dog = std::make_shared<Dog>("Rover");
     auto* ptr = dog.get();

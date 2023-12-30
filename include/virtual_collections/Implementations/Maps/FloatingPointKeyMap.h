@@ -2,11 +2,11 @@
 
 #include <collections.h>
 
-#include "../../Interfaces/IVirtualMap.h"
+#include "../../Interfaces/IFloatingPointKeyMap.h"
 
 namespace VirtualCollections::Maps {
 
-    class FloatingPointKeyMap : public IVirtualMap::IFloatingPointKeyMap {
+    class FloatingPointKeyMap : public IFloatingPointKeyMap {
         collections_map<double, IVoidPointer*> _map;
 
     public:
@@ -16,11 +16,11 @@ namespace VirtualCollections::Maps {
 
         unsigned int  size() const override { return _map.size(); }
         void          insert(double key, IVoidPointer* value) override { _map[key] = value; }
-        IVoidPointer* get(double key) override {
+        IVoidPointer* get(double key) const override {
             auto it = _map.find(key);
             return it != _map.end() ? it->second : nullptr;
         }
-        bool contains(double key) override { return _map.find(key) != _map.end(); }
+        bool contains(double key) const override { return _map.find(key) != _map.end(); }
         void remove(double key) override { _map.erase(key); }
         void clear() override { _map.clear(); }
         void foreach_key_and_value(IVirtualCollection::ForEachElementFn* callback) const override {

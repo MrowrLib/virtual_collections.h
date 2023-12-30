@@ -2,11 +2,11 @@
 
 #include <collections.h>
 
-#include "../../Interfaces/IVirtualMap.h"
+#include "../../Interfaces/IBooleanKeyMap.h"
 
 namespace VirtualCollections::Maps {
 
-    class BooleanKeyMap : public IVirtualMap::IBooleanKeyMap {
+    class BooleanKeyMap : public IBooleanKeyMap {
         collections_map<bool, IVoidPointer*> _map;
 
     public:
@@ -16,11 +16,11 @@ namespace VirtualCollections::Maps {
 
         unsigned int  size() const override { return _map.size(); }
         void          insert(bool key, IVoidPointer* value) override { _map[key] = value; }
-        IVoidPointer* get(bool key) override {
+        IVoidPointer* get(bool key) const override {
             auto it = _map.find(key);
             return it != _map.end() ? it->second : nullptr;
         }
-        bool contains(bool key) override { return _map.find(key) != _map.end(); }
+        bool contains(bool key) const override { return _map.find(key) != _map.end(); }
         void remove(bool key) override { _map.erase(key); }
         void clear() override { _map.clear(); }
         void foreach_key_and_value(IVirtualCollection::ForEachElementFn* callback) const override {

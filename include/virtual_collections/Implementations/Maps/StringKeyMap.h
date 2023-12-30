@@ -4,11 +4,11 @@
 
 #include <string>
 
-#include "../../Interfaces/IVirtualMap.h"
+#include "../../Interfaces/IStringKeyMap.h"
 
 namespace VirtualCollections::Maps {
 
-    class StringKeyMap : public IVirtualMap::IStringKeyMap {
+    class StringKeyMap : public IStringKeyMap {
         collections_map<std::string, IVoidPointer*> _map;
 
     public:
@@ -18,11 +18,11 @@ namespace VirtualCollections::Maps {
 
         unsigned int  size() const override { return _map.size(); }
         void          insert(const char* key, IVoidPointer* value) override { _map[key] = value; }
-        IVoidPointer* get(const char* key) override {
+        IVoidPointer* get(const char* key) const override {
             auto it = _map.find(key);
             return it != _map.end() ? it->second : nullptr;
         }
-        bool contains(const char* key) override { return _map.find(key) != _map.end(); }
+        bool contains(const char* key) const override { return _map.find(key) != _map.end(); }
         void remove(const char* key) override { _map.erase(key); }
         void clear() override { _map.clear(); }
         void foreach_key_and_value(IVirtualCollection::ForEachElementFn* callback) const override {
