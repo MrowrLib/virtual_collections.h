@@ -27,6 +27,25 @@ Example("restrict the type of keys in map") {
 
     AssertThat(map.contains("one"), Equals(false));
     AssertThat(map.size(), Equals(1));
+
+    std::vector<std::string> keys;
+    std::vector<int>         values;
+
+    map.insert("two", 2);
+    map.insert("three", 3);
+
+    map.foreach<int>([&keys, &values](const char* key, int value) {
+        keys.push_back(key);
+        values.push_back(value);
+    });
+
+    AssertThat(keys.size(), Equals(2));
+    AssertThat(keys, Has().Exactly(1).EqualTo("two"));
+    AssertThat(keys, Has().Exactly(1).EqualTo("three"));
+
+    AssertThat(values.size(), Equals(2));
+    AssertThat(values, Has().Exactly(1).EqualTo(2));
+    AssertThat(values, Has().Exactly(1).EqualTo(3));
 }
 
 Example("restrict the type of keys and values in map") {
@@ -52,6 +71,25 @@ Example("restrict the type of keys and values in map") {
 
     AssertThat(map.contains("one"), Equals(false));
     AssertThat(map.size(), Equals(1));
+
+    std::vector<std::string> keys;
+    std::vector<int>         values;
+
+    map.insert("two", 2);
+    map.insert("three", 3);
+
+    map.foreach([&keys, &values](const char* key, int value) {
+        keys.push_back(key);
+        values.push_back(value);
+    });
+
+    AssertThat(keys.size(), Equals(2));
+    AssertThat(keys, Has().Exactly(1).EqualTo("two"));
+    AssertThat(keys, Has().Exactly(1).EqualTo("three"));
+
+    AssertThat(values.size(), Equals(2));
+    AssertThat(values, Has().Exactly(1).EqualTo(2));
+    AssertThat(values, Has().Exactly(1).EqualTo(3));
 }
 
 Example("foreach over key and values") {

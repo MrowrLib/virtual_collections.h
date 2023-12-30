@@ -75,8 +75,8 @@ void Example() {
       - [`foreach()`](#foreach-2)
   - [Type Safe Collections](#type-safe-collections)
     - [Typed Array](#typed-array)
+    - [Typed Map](#typed-map)
     - [Typed Map (key only)](#typed-map-key-only)
-    - [Typed Map (key and value)](#typed-map-key-and-value)
     - [Typed Set](#typed-set)
   - [License](#license)
 
@@ -448,6 +448,10 @@ array.foreach<int>([](int item) {
 
 ### Map
 
+> _Note: at this time, the map does not support a range-based `for` loop iterator_
+>
+> _But you can use the available `foreach` functions instead!_
+
 #### `VirtualMap()` (_implementation_)
 
 ```cpp
@@ -572,6 +576,10 @@ map.foreach<bool, int>([](bool key, int value) {
 
 ### Set
 
+> _Note: at this time, the set does not support a range-based `for` loop iterator_
+>
+> _But you can use the available `foreach` functions instead!_
+
 #### `VirtualSet()` (_implementation_)
 
 ```cpp
@@ -681,6 +689,8 @@ If you want type safety, you can use the templated versions of the collections:
 
 These classes have the same interface as the non-templated collections, but they are type safe.
 
+The compiler will not allow storage of anything other than the specified type.
+
 There is no abstract base class for the typed collections and you should not store them.
 Instead, store the underlying collection and use `.typed<T>()` to get a typed wrapper as needed.
 
@@ -695,10 +705,10 @@ Instead, store the underlying collection and use `.typed<T>()` to get a typed wr
 ### Typed Array
 
 ```cpp
-ITypedArray* untypedArray = new VirtualArray();
+VirtualArray untyped;
 
 // Then, when you want compiler type safety...
-auto array = untypedArray->typed<int>();
+auto array = untyped->typed<int>();
 
 // Now, you can use the typed array
 array->push(69);
@@ -707,13 +717,84 @@ auto integer = array->at(0); // You do not need to use at<T> to get a typed valu
 auto integer = array[0];     // You can also use the [] operator to get a typed value
 
 // You can also use the typed array in a ranged for loop
+for (auto number : array) {
+    // ...
+}
+
+// To loop with the index, you can use foreach
+array->foreach([](unsigned int index, int number) {
+    // ...
+});
+
+// foreach also supports only the element
+array->foreach([](int number) {
+    // ...
+});
+```
+
+### Typed Map
+
+> _Note: at this time, the typed map does not support a range-based `for` loop iterator_
+
+```cpp
+VirtualMap untyped;
+
+// Then, when you want compiler type safety...
+auto map = untyped->typed<int, double>();
+
+// Now, you can use the typed map
+map->insert(69, 3.14);
+
+double value = map->get(69); // You do not need to use get<T> to get a typed value
+
+// Use foreach to loop over key and value
+map->foreach([](int key, double value) {
+    // ...
+});
 ```
 
 ### Typed Map (key only)
 
-### Typed Map (key and value)
+> _Note: at this time, the typed map does not support a range-based `for` loop iterator_
+
+Perhaps less useful, you can _also_ use the typed map with only a typed key.
+
+```cpp
+VirtualMap untyped;
+
+// Then, when you want compiler type safety...
+auto map = untyped->typed<int>(); // key only
+
+// Now, you can use the typed map
+map->insert(69, "Sixty Nine");
+
+auto value = map->get<const char*>(69); // You still need to use get<T> to get a typed value
+
+// Use foreach to loop over key and value
+// You still need to provide the T for the value (but not the key)
+map->foreach<const char*>([](int key, const char* value) {
+    // ...
+});
+```
 
 ### Typed Set
+
+> _Note: at this time, the typed set does not support a range-based `for` loop iterator_
+
+```cpp
+VirtualSet untyped;
+
+// Then, when you want compiler type safety...
+auto set = untyped->typed<int>();
+
+// Now, you can use the typed set
+set->insert(69);
+
+// Use foreach to loop over value
+set->foreach([](int value) {
+    // ...
+});
+```
 
 ## License
 
