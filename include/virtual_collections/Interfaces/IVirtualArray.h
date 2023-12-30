@@ -9,16 +9,44 @@ namespace VirtualCollections {
     struct IVirtualArray : public virtual IVirtualCollection {
         using ForEachIndexAndElementFn = IFunctionPointer<void(unsigned int, IVoidPointer*)>;
 
+        class Iterator {
+            IVirtualArray* array;
+            unsigned int   index;
+
+        public:
+            Iterator(IVirtualArray* array, unsigned int index) : array(array), index(index) {}
+
+            Iterator& operator++() {
+                ++index;
+                return *this;
+            }
+
+            Iterator operator++(int) {
+                Iterator tmp = *this;
+                ++(*this);
+                return tmp;
+            }
+
+            bool operator==(const Iterator& rhs) const { return index == rhs.index; }
+
+            bool operator!=(const Iterator& rhs) const { return index != rhs.index; }
+
+            IVoidPointer* operator*() const { return array->pointer_at(index); }
+        };
+
         virtual ~IVirtualArray() = default;
 
-        virtual IVoidPointer* get(unsigned int index) const = 0;
-        virtual IVoidPointer* first() const                 = 0;
-        virtual IVoidPointer* last() const                  = 0;
+        virtual IVoidPointer* pointer_at(unsigned int index) const = 0;
+        virtual IVoidPointer* first() const                        = 0;
+        virtual IVoidPointer* last() const                         = 0;
+
+        Iterator begin() { return Iterator(this, 0); }
+        Iterator end() { return Iterator(this, this->size()); }
 
         virtual void push_pointer(IVoidPointer*)                       = 0;
         virtual void insert_pointer(unsigned int index, IVoidPointer*) = 0;
-        virtual void remove(unsigned int index)                        = 0;
-        virtual void remove(unsigned int index, unsigned int count)    = 0;
+        virtual void erase(unsigned int index)                         = 0;
+        virtual void erase(unsigned int index, unsigned int count)     = 0;
 
         virtual void foreach(ForEachIndexAndElementFn*) const = 0;
 
@@ -28,46 +56,42 @@ namespace VirtualCollections {
         }
 
         template <typename T, typename std::enable_if<!std::is_pointer<T>::value, int>::type = 0>
-        T get(unsigned int index) const {
-            if (auto* element = this->get(index)) return *element->as<T>();
+        T at(unsigned int index) const {
+            if (auto* element = pointer_at(index)) return element->as<T>();
             return {};
         }
 
         template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
-        T get(unsigned int index) const {
-            auto* ptr = get(index);
+        T at(unsigned int index) const {
+            auto* ptr = pointer_at(index);
             if (!ptr) return nullptr;
-            return static_cast<T>(ptr->void_ptr());
+            return ptr->as<T>();
         }
 
         template <>
-        const char* get<const char*>(unsigned int index) const {
-            if (auto* element = this->get(index)) return element->as<const char>();
+        const char* at<const char*>(unsigned int index) const {
+            if (auto* element = this->pointer_at(index)) return element->as<const char*>();
             return "";
         }
 
         template <typename T, typename std::enable_if<!std::is_pointer<T>::value, int>::type = 0>
         T first() const {
-            return *first()->as<T>();
+            return first()->as<T>();
         }
 
         template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
         T first() const {
-            auto* ptr = first();
-            if (!ptr) return nullptr;
-            return static_cast<T>(ptr->void_ptr());
+            return first()->as<T>();
         }
 
         template <typename T, typename std::enable_if<!std::is_pointer<T>::value, int>::type = 0>
         T last() const {
-            return *last()->as<T>();
+            return last()->as<T>();
         }
 
         template <typename T, typename std::enable_if<std::is_pointer<T>::value, int>::type = 0>
         T last() const {
-            auto* ptr = last();
-            if (!ptr) return nullptr;
-            return static_cast<T>(ptr->void_ptr());
+            return last()->as<T>();
         }
 
         template <typename T>

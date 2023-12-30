@@ -112,9 +112,7 @@ namespace VirtualCollections {
         TValue get(TKey key) {
             auto* ptr = bools()->get(key);
             if (!ptr) return {};
-            auto value = ptr->template as<TValue>();
-            if (!value) return {};
-            return *value;
+            return ptr->template as<TValue>();
         }
 
         template <
@@ -126,7 +124,7 @@ namespace VirtualCollections {
         TValue get(TKey key) {
             auto* ptr = bools()->get(key);
             if (!ptr) return nullptr;
-            return static_cast<TValue>(ptr->void_ptr());
+            return ptr->template as<TValue>();
         }
 
         // contains()
@@ -190,9 +188,7 @@ namespace VirtualCollections {
         TValue get(TKey key) {
             auto* ptr = ints()->get(key);
             if (!ptr) return {};
-            auto value = ptr->template as<TValue>();
-            if (!value) return {};
-            return *value;
+            return ptr->template as<TValue>();
         }
 
         template <
@@ -204,7 +200,7 @@ namespace VirtualCollections {
         TValue get(TKey key) {
             auto* ptr = ints()->get(key);
             if (!ptr) return nullptr;
-            return static_cast<TValue>(ptr->void_ptr());
+            return ptr->template as<TValue>();
         }
 
         // contains()
@@ -275,9 +271,7 @@ namespace VirtualCollections {
         TValue get(TKey key) {
             auto* ptr = floats()->get(key);
             if (!ptr) return {};
-            auto value = ptr->template as<TValue>();
-            if (!value) return {};
-            return *value;
+            return ptr->template as<TValue>();
         }
 
         template <
@@ -289,7 +283,7 @@ namespace VirtualCollections {
         TValue get(TKey key) {
             auto* ptr = floats()->get(key);
             if (!ptr) return nullptr;
-            return static_cast<TValue>(ptr->void_ptr());
+            return ptr->template as<TValue>();
         }
 
         // contains()
@@ -337,16 +331,14 @@ namespace VirtualCollections {
         TValue get(const char* key) {
             auto* ptr = strings()->get(key);
             if (!ptr) return {};
-            auto value = ptr->template as<TValue>();
-            if (!value) return {};
-            return *value;
+            return ptr->template as<TValue>();
         }
 
         template <typename TValue, std::enable_if_t<std::is_pointer<TValue>::value, int> = 0>
         TValue get(const char* key) {
             auto* ptr = strings()->get(key);
             if (!ptr) return nullptr;
-            return static_cast<TValue>(ptr->void_ptr());
+            return ptr->template as<TValue>();
         }
 
         // contains()
@@ -397,10 +389,7 @@ namespace VirtualCollections {
         TValue get(TKey key) {
             auto* ptr = pointers()->get(key);
             if (!ptr) return {};
-            auto value = ptr->template as<TValue>();
-            if (!value) return {};
-            return *value;
-            return {};
+            return ptr->template as<TValue>();
         }
 
         template <
@@ -410,8 +399,7 @@ namespace VirtualCollections {
         TValue get(TKey key) {
             auto* ptr = pointers()->get(key);
             if (!ptr) return nullptr;
-            return static_cast<TValue>(ptr->void_ptr());
-            return nullptr;
+            return ptr->as<TValue>();
         }
 
         // contains()

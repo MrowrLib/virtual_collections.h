@@ -27,7 +27,8 @@ namespace VirtualCollections {
             for (size_t i = 0; i < _elements.size(); ++i) callback->invoke(i, _elements[i]);
         }
 
-        IVoidPointer* get(unsigned int index) const override {
+        // TODO: bring back the regular prt = at()
+        IVoidPointer* pointer_at(unsigned int index) const override {
             if (index < _elements.size()) return _elements[index];
             return nullptr;
         }
@@ -49,11 +50,11 @@ namespace VirtualCollections {
             else _elements.push_back(element);
         }
 
-        void remove(unsigned int index) override {
+        void erase(unsigned int index) override {
             if (index < _elements.size()) _elements.erase(_elements.begin() + index);
         }
 
-        void remove(unsigned int index, unsigned int count) override {
+        void erase(unsigned int index, unsigned int count) override {
             if (index < _elements.size())
                 _elements.erase(_elements.begin() + index, _elements.begin() + index + count);
         }
