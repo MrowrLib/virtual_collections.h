@@ -58,7 +58,22 @@ void Example() {
       - [ranged `for` loop](#ranged-for-loop)
         - [templated `for` loop (`iterable<T>`)](#templated-for-loop-iterablet)
       - [`foreach()`](#foreach)
-
+    - [Map](#map)
+      - [`VirtualMap()` (_implementation_)](#virtualmap-implementation)
+      - [`insert()`](#insert-1)
+      - [`get()`](#get)
+      - [`contains()`](#contains)
+      - [`size()`](#size-1)
+      - [`clear()`](#clear-1)
+      - [`foreach()`](#foreach-1)
+    - [Set](#set)
+      - [`VirtualSet()` (_implementation_)](#virtualset-implementation)
+      - [`insert()`](#insert-2)
+      - [`contains()`](#contains-1)
+      - [`size()`](#size-2)
+      - [`clear()`](#clear-2)
+      - [`foreach()`](#foreach-2)
+  - [License](#license)
 
 ## What?
 
@@ -346,12 +361,165 @@ array.foreach<int>([](int item) {
     // ...
 });
 ```
-```
 
 ### Map
 
+#### `VirtualMap()` (_implementation_)
+
+```cpp
+#include <virtual_collections.h>
+
+VirtualMap map;
+```
+
+#### `insert()`
+
+```cpp
+map.insert(true, "True"); // boolean
+map.insert(69, "Sixty Nine");  // int
+map.insert(3.14, "Pi"); // double
+map.insert("Hello", "World"); // const char*
+map.insert(new Dog(), "Dog"); // pointer
+```
+
+#### `get()`
+
+```cpp
+bool       boolean       = map.get<bool>("True");
+int        integer       = map.get<int>("Sixty Nine");
+double     floatingPoint = map.get<double>("Pi");
+const char string        = map.get<const char*>("World");
+Dog*       pointer       = map.get<Dog*>("Dog");
+```
+
+#### `contains()`
+
+```cpp
+bool contains = map.contains("True");
+bool contains = map.contains<bool>("True");
+bool contains = map.contains<int>("Sixty Nine");
+bool contains = map.contains<double>("Pi");
+bool contains = map.contains<const char*>("World");
+```
+
+#### `size()`
+
+```cpp
+unsigned int size = map.size();
+```
+
+#### `clear()`
+
+```cpp
+map.clear();
+```
+
+#### `foreach()`
+
+Various `foreach()` functions are provided which take a `std::function` callback:
+
+Get the key and value (_both as `IVoidPointer*`_):
+- `foreach(std::function<void(IVoidPointer*, IVoidPointer*)> callback)`
+
+Get the key (_as specified type_) and value (_as `IVoidPointer*`_):
+- `foreach<TKeyType>(std::function<void(TKeyType, IVoidPointer*)> callback)`
+
+Get the key (_as specified type_) and value (_as specified type_):
+- `foreach<TKeyType, TValueType>(std::function<void(TKeyType, TValueType)> callback)`
+
+```cpp
+map.foreach([](IVoidPointer* key, IVoidPointer* value) {
+    // Keys as IVoidPointer*
+    bool       boolean       = key->as<bool>();
+    int        integer       = key->as<int>();
+    double     floatingPoint = key->as<double>();
+    const char string        = key->as<const char*>();
+    Dog*       pointer       = key->as<Dog*>();
+    // Values as IVoidPointer*
+    bool       boolean       = value->as<bool>();
+    int        integer       = value->as<int>();
+    double     floatingPoint = value->as<double>();
+    const char string        = value->as<const char*>();
+    Dog*       pointer       = value->as<Dog*>();
+});
+
+map.foreach<bool>([](bool key, IVoidPointer* value) {
+    // Keys as bool
+    // Values as IVoidPointer*
+});
+
+map.foreach<bool, int>([](bool key, int value) {
+    // Keys as bool
+    // Values as int
+});
+```
+
 ### Set
-    
+
+#### `VirtualSet()` (_implementation_)
+
+```cpp
+#include <virtual_collections.h>
+
+VirtualSet set;
+```
+
+#### `insert()`
+
+```cpp
+set.insert(true); // boolean
+set.insert(69);  // int
+set.insert(3.14); // double
+set.insert("Hello World"); // const char*
+set.insert(new Dog()); // pointer
+```
+
+#### `contains()`
+
+```cpp
+bool contains = set.contains(true);
+bool contains = set.contains(69);
+bool contains = set.contains(3.14);
+bool contains = set.contains("Hello World");
+```
+
+#### `size()`
+
+```cpp
+unsigned int size = set.size();
+```
+
+#### `clear()`
+
+```cpp
+set.clear();
+```
+
+#### `foreach()`
+
+Various `foreach()` functions are provided which take a `std::function` callback:
+
+Get the value (_as `IVoidPointer*`_):
+- `foreach(std::function<void(IVoidPointer*)> callback)`
+
+Get the value (_as specified type_):
+- `foreach<TValueType>(std::function<void(TValueType)> callback)`
+
+```cpp
+set.foreach([](IVoidPointer* value) {
+    // Values as IVoidPointer*
+    bool       boolean       = value->as<bool>();
+    int        integer       = value->as<int>();
+    double     floatingPoint = value->as<double>();
+    const char string        = value->as<const char*>();
+    Dog*       pointer       = value->as<Dog*>();
+});
+
+set.foreach<int>([](int value) {
+    // Values as int
+});
+```
+
 ## License
 
 Use however, no attribution required.
