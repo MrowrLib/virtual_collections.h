@@ -4,6 +4,38 @@
 
 #include "SpecHelper.h"  // IWYU pragma: keep
 
+Example("templated foreach") {
+    std::vector<int> items;
+
+    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+
+    set->insert(1);
+    set->insert(2);
+    set->insert(3);
+
+    set->foreach<int>([&](int item) { items.push_back(item); });
+
+    AssertThat(items[0], Equals(1));
+    AssertThat(items[1], Equals(2));
+    AssertThat(items[2], Equals(3));
+}
+
+Example("foreach IVoidPointer") {
+    std::vector<int> items;
+
+    auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
+
+    set->insert(1);
+    set->insert(2);
+    set->insert(3);
+
+    set->foreach([&](IVoidPointer* item) { items.push_back(item->as<int>()); });
+
+    AssertThat(items[0], Equals(1));
+    AssertThat(items[1], Equals(2));
+    AssertThat(items[2], Equals(3));
+}
+
 Example("boolean key set") {
     auto set = std::unique_ptr<IVirtualSet>(new VirtualSet());
 

@@ -4,6 +4,86 @@
 
 #include "SpecHelper.h"  // IWYU pragma: keep
 
+Example("templated foreach element") {
+    std::vector<int> items;
+
+    auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
+
+    array->push(1);
+    array->push(2);
+    array->push(3);
+
+    array->foreach<int>([&](int item) { items.push_back(item); });
+
+    AssertThat(items[0], Equals(1));
+    AssertThat(items[1], Equals(2));
+    AssertThat(items[2], Equals(3));
+}
+
+Example("templated foreach element with index") {
+    std::vector<int>          items;
+    std::vector<unsigned int> indexes;
+
+    auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
+
+    array->push(1);
+    array->push(2);
+    array->push(3);
+
+    array->foreach<int>([&](unsigned int index, int item) {
+        indexes.push_back(index);
+        items.push_back(item);
+    });
+
+    AssertThat(indexes[0], Equals(0));
+    AssertThat(indexes[1], Equals(1));
+    AssertThat(indexes[2], Equals(2));
+
+    AssertThat(items[0], Equals(1));
+    AssertThat(items[1], Equals(2));
+    AssertThat(items[2], Equals(3));
+}
+
+Example("foreach IVoidPointer") {
+    std::vector<int> items;
+
+    auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
+
+    array->push(1);
+    array->push(2);
+    array->push(3);
+
+    array->foreach([&](IVoidPointer* item) { items.push_back(item->as<int>()); });
+
+    AssertThat(items[0], Equals(1));
+    AssertThat(items[1], Equals(2));
+    AssertThat(items[2], Equals(3));
+}
+
+Example("foreach IVoidPointer with index") {
+    std::vector<int>          items;
+    std::vector<unsigned int> indexes;
+
+    auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
+
+    array->push(1);
+    array->push(2);
+    array->push(3);
+
+    array->foreach([&](unsigned int index, IVoidPointer* item) {
+        indexes.push_back(index);
+        items.push_back(item->as<int>());
+    });
+
+    AssertThat(indexes[0], Equals(0));
+    AssertThat(indexes[1], Equals(1));
+    AssertThat(indexes[2], Equals(2));
+
+    AssertThat(items[0], Equals(1));
+    AssertThat(items[1], Equals(2));
+    AssertThat(items[2], Equals(3));
+}
+
 Example("range based for loop") {
     std::vector<IVoidPointer*> values;
 

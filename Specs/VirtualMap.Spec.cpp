@@ -4,6 +4,69 @@
 
 #include "SpecHelper.h"  // IWYU pragma: keep
 
+Example("templated foreach") {
+    std::vector<int>    keys;
+    std::vector<double> values;
+
+    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+
+    map->insert(123, 456.789);
+    map->insert(456, 123.456);
+
+    map->foreach<int, double>([&](int key, double value) {
+        keys.push_back(key);
+        values.push_back(value);
+    });
+
+    AssertThat(keys[0], Equals(123));
+    AssertThat(keys[1], Equals(456));
+
+    AssertThat(values[0], Equals(456.789));
+    AssertThat(values[1], Equals(123.456));
+}
+
+Example("templated foreach only key type") {
+    std::vector<int>    keys;
+    std::vector<double> values;
+
+    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+
+    map->insert(123, 456.789);
+    map->insert(456, 123.456);
+
+    map->foreach<int>([&](int key, IVoidPointer* value) {
+        keys.push_back(key);
+        values.push_back(value->as<double>());
+    });
+
+    AssertThat(keys[0], Equals(123));
+    AssertThat(keys[1], Equals(456));
+
+    AssertThat(values[0], Equals(456.789));
+    AssertThat(values[1], Equals(123.456));
+}
+
+Example("foreach IVoidPointer") {
+    std::vector<int>    keys;
+    std::vector<double> values;
+
+    auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
+
+    map->insert(123, 456.789);
+    map->insert(456, 123.456);
+
+    map->foreach([&](IVoidPointer* key, IVoidPointer* value) {
+        keys.push_back(key->as<int>());
+        values.push_back(value->as<double>());
+    });
+
+    AssertThat(keys[0], Equals(123));
+    AssertThat(keys[1], Equals(456));
+
+    AssertThat(values[0], Equals(456.789));
+    AssertThat(values[1], Equals(123.456));
+}
+
 Example("boolean key map") {
     auto map = std::unique_ptr<IVirtualMap>(new VirtualMap());
 

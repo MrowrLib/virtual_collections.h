@@ -84,6 +84,29 @@ namespace VirtualCollections {
             this->foreach(fn.get());
         }
 
+        void foreach(std::function<void(IVoidPointer*)> callback) const {
+            auto fn = unique_function_pointer([callback](unsigned int, IVoidPointer* item) {
+                callback(item);
+            });
+            this->foreach(fn.get());
+        }
+
+        template <typename T>
+        void foreach(std::function<void(unsigned int, T)> callback) const {
+            auto fn = unique_function_pointer([callback](unsigned int index, IVoidPointer* item) {
+                callback(index, item->as<T>());
+            });
+            this->foreach(fn.get());
+        }
+
+        template <typename T>
+        void foreach(std::function<void(T)> callback) const {
+            auto fn = unique_function_pointer([callback](unsigned int, IVoidPointer* item) {
+                callback(item->as<T>());
+            });
+            this->foreach(fn.get());
+        }
+
         template <typename T, typename std::enable_if<!std::is_pointer<T>::value, int>::type = 0>
         T at(unsigned int index) const {
             if (auto* element = at(index)) return element->as<T>();
