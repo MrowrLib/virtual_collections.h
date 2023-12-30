@@ -13,19 +13,19 @@ namespace VirtualCollections {
 
         virtual ~IVirtualCollection() = default;
 
-        virtual unsigned int size() const                             = 0;
-        virtual void         foreach_element(ForEachElementFn*) const = 0;
-        virtual void         foreach_item(ForEachItemFn*) const       = 0;
-        virtual void         clear()                                  = 0;
+        virtual unsigned int size() const                                   = 0;
+        virtual void         foreach_key_and_value(ForEachElementFn*) const = 0;
+        virtual void         foreach_value(ForEachItemFn*) const            = 0;
+        virtual void         clear()                                        = 0;
 
         void foreach(std::function<void(IVoidPointer*)> callback) const {
             auto fn = unique_function_pointer(callback);
-            this->foreach_item(fn.get());
+            this->foreach_value(fn.get());
         }
 
         void foreach(std::function<void(IVoidPointer*, IVoidPointer*)> callback) const {
             auto fn = unique_function_pointer(callback);
-            this->foreach_element(fn.get());
+            this->foreach_key_and_value(fn.get());
         }
 
         template <typename T>
@@ -33,7 +33,7 @@ namespace VirtualCollections {
             auto fn = unique_function_pointer([callback](IVoidPointer* item) {
                 callback(item->as<T>());
             });
-            this->foreach_item(fn.get());
+            this->foreach_value(fn.get());
         }
 
         template <typename T>
@@ -41,7 +41,7 @@ namespace VirtualCollections {
             auto fn = unique_function_pointer([callback](IVoidPointer* key, IVoidPointer* item) {
                 callback(key->as<T>(), item);
             });
-            this->foreach_element(fn.get());
+            this->foreach_key_and_value(fn.get());
         }
 
         template <typename TKey, typename TValue>
@@ -49,7 +49,7 @@ namespace VirtualCollections {
             auto fn = unique_function_pointer([callback](IVoidPointer* key, IVoidPointer* item) {
                 callback(key->as<TKey>(), item->as<TValue>());
             });
-            this->foreach_element(fn.get());
+            this->foreach_key_and_value(fn.get());
         }
     };
 }

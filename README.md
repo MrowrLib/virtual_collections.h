@@ -43,6 +43,7 @@ void Example() {
   - [Why?](#why)
   - [How?](#how)
   - [Supported Types](#supported-types)
+    - [`IVoidPointer` (`void*` with `delete` support)](#ivoidpointer-void-with-delete-support)
   - [Collections](#collections)
     - [Array](#array)
         - [`VirtualArray` (_implementation_)](#virtualarray-implementation)
@@ -53,6 +54,7 @@ void Example() {
       - [`clear()`](#clear)
       - [`insert()`](#insert)
       - [`erase()`](#erase)
+      - [ranged `for` loop](#ranged-for-loop)
     - [Map](#map)
     - [Set](#set)
   - [License](#license)
@@ -112,7 +114,7 @@ tarat_link_libraries(Example PRIVATE virtual_collections::virtual_collections)
         {
             "kind": "git",
             "repository": "https://github.com/MrowrLib/Packages.git",
-            "baseline": "e92d44a318763b1e49b51f23134a31ad624d2d6d",
+            "baseline": "b44a121d79f6035161b3aeaa5354b56ce903ea19",
             "packages": [
                 "mrowr-virtual-collections",
                 "mrowr-void-pointer",
@@ -167,6 +169,29 @@ Collections support the following types:
 - Floating point types (`float`, `double`, ...) - _stored as `double`_
 - C style strings (`const char*`) - _stored as `std::string`_
 - Pointers - _stored as `void*`_
+
+### `IVoidPointer` (`void*` with `delete` support)
+
+Containers store most items wrapped in a `IVoidPointer` which is a `void*` with `delete` support.
+
+> **`<void_pointer.h>`**`
+>
+> https://github.com/MrowrLib/void_pointer.h/
+
+You will likely not interact with `IVoidPointer` directly, but it is used internally by the collections.
+
+The only thing you really need to know about an `IVoidPointer` is:
+
+- If you have one and you want the value it points to, you can use `IVoidPointer::as<T>()` to get the value as a `T`.
+- If the value you want is a pointer, you can use `IVoidPointer::as<T*>()` to get the value as a `T*`.
+
+Here are some functions where you may interact with an `IVoidPointer`:
+
+- `IVirtualArray.push_pointer(IPointer* pointer)` - _if you don't use a templated version of the `push()` function_
+- `IVirtualArray.insert_pointer(unsigned int index, IPointer* pointer)` - _if you don't use a templated version of the `insert()` function_
+- `for (auto* element : *array)` - _if you use a ranged `for` loop on the `IVirtualArray`, each element is an `IVoidPointer*`_
+
+And every collection offers `foreach`, `foreach_value`, and `foreach_key_and_value` functions which take `std::function` callbacks and provide `IVoidPointer*` as arguments.
 
 ## Collections
 
@@ -236,6 +261,16 @@ array.insert(4, new Dog()); // pointer
 
 ```cpp
 array.erase(0);
+```
+
+#### ranged `for` loop
+
+Using a `for` loop directly on the `IVirtualArray` will loop over items as `IVoidPointer` (_which is how they are stored_).
+
+```cpp
+for (auto& item : array) {
+    // ...
+}
 ```
 
 ### Map

@@ -23,13 +23,13 @@ namespace VirtualCollections::Maps {
         bool contains(bool key) override { return _map.find(key) != _map.end(); }
         void remove(bool key) override { _map.erase(key); }
         void clear() override { _map.clear(); }
-        void foreach_element(IVirtualCollection::ForEachElementFn* callback) const override {
+        void foreach_key_and_value(IVirtualCollection::ForEachElementFn* callback) const override {
             for (auto& pair : _map) {
                 auto key = VoidPointer(new bool(pair.first));
                 callback->invoke(&key, pair.second);
             }
         }
-        void foreach_item(IVirtualCollection::ForEachItemFn* callback) const override {
+        void foreach_value(IVirtualCollection::ForEachItemFn* callback) const override {
             for (auto& pair : _map) callback->invoke(pair.second);
         }
     };

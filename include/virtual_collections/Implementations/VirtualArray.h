@@ -12,14 +12,14 @@ namespace VirtualCollections {
     public:
         unsigned int size() const override { return _elements.size(); }
 
-        void foreach_element(ForEachElementFn* callback) const override {
+        void foreach_key_and_value(ForEachElementFn* callback) const override {
             for (size_t i = 0; i < _elements.size(); ++i) {
                 auto indexPtr = VoidPointer(new unsigned int(i));
                 callback->invoke(&indexPtr, _elements[i]);
             }
         }
 
-        void foreach_item(ForEachItemFn* callback) const override {
+        void foreach_value(ForEachItemFn* callback) const override {
             for (auto& element : _elements) callback->invoke(element);
         }
 

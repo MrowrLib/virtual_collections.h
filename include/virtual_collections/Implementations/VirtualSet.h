@@ -50,20 +50,20 @@ namespace VirtualCollections {
                    (_pointers ? _pointers->size() : 0);
         }
 
-        void foreach_element(ForEachElementFn* callback) const override {
-            if (_bools) _bools->foreach_element(callback);
-            if (_ints) _ints->foreach_element(callback);
-            if (_floats) _floats->foreach_element(callback);
-            if (_strings) _strings->foreach_element(callback);
-            if (_pointers) _pointers->foreach_element(callback);
+        void foreach_key_and_value(ForEachElementFn* callback) const override {
+            if (_bools) _bools->foreach_key_and_value(callback);
+            if (_ints) _ints->foreach_key_and_value(callback);
+            if (_floats) _floats->foreach_key_and_value(callback);
+            if (_strings) _strings->foreach_key_and_value(callback);
+            if (_pointers) _pointers->foreach_key_and_value(callback);
         }
 
-        void foreach_item(ForEachItemFn* callback) const override {
-            if (_bools) _bools->foreach_item(callback);
-            if (_ints) _ints->foreach_item(callback);
-            if (_floats) _floats->foreach_item(callback);
-            if (_strings) _strings->foreach_item(callback);
-            if (_pointers) _pointers->foreach_item(callback);
+        void foreach_value(ForEachItemFn* callback) const override {
+            if (_bools) _bools->foreach_value(callback);
+            if (_ints) _ints->foreach_value(callback);
+            if (_floats) _floats->foreach_value(callback);
+            if (_strings) _strings->foreach_value(callback);
+            if (_pointers) _pointers->foreach_value(callback);
         }
 
         void clear() override {
