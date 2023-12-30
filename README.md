@@ -44,6 +44,7 @@ void Example() {
   - [How?](#how)
   - [Supported Types](#supported-types)
     - [`IVoidPointer` (`void*` with `delete` support)](#ivoidpointer-void-with-delete-support)
+    - [`IFunctionPointer` (`virtual` function pointer)](#ifunctionpointer-virtual-function-pointer)
   - [Collections](#collections)
     - [Array](#array)
         - [`VirtualArray` (_implementation_)](#virtualarray-implementation)
@@ -176,7 +177,7 @@ Containers store most items wrapped in a `IVoidPointer` which is a `void*` with 
 
 > **`<void_pointer.h>`**`
 >
-> https://github.com/MrowrLib/void_pointer.h/
+> https://github.com/MrowrLib/void_pointer.h
 
 You will likely not interact with `IVoidPointer` directly, but it is used internally by the collections.
 
@@ -192,6 +193,18 @@ Here are some functions where you may interact with an `IVoidPointer`:
 - `for (auto* element : *array)` - _if you use a ranged `for` loop on the `IVirtualArray`, each element is an `IVoidPointer*`_
 
 And every collection offers `foreach`, `foreach_value`, and `foreach_key_and_value` functions which take `std::function` callbacks and provide `IVoidPointer*` as arguments.
+
+### `IFunctionPointer` (`virtual` function pointer)
+
+The low-level `foreach*` functions take `IFunctionPointer*` callbacks as arguments.
+
+> **`<function_pointer.h>`**`
+>
+> https://github.com/MrowrLib/function_pointer.h
+
+Like `IVoidPointer`, you will likely not interact with `IFunctionPointer` directly, but it is used internally by the collections.
+
+You can use the higher-level `foreach*` functions which take `std::function` callbacks (_which safely use `IFunctionPointer` internally for safe cross-DLL callbacks_).
 
 ## Collections
 
