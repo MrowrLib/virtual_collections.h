@@ -2,7 +2,7 @@
 
 #include <collections.h>
 
-#include "../../Interfaces/IVirtualSet.h"
+#include "../../Interfaces/IBooleanKeySet.h"
 
 namespace VirtualCollections::Sets {
 
@@ -13,7 +13,7 @@ namespace VirtualCollections::Sets {
         unsigned int size() const override { return _set.size(); }
         void         insert(bool key) override { _set.insert(key); }
         bool         contains(bool key) const override { return _set.find(key) != _set.end(); }
-        void         remove(bool key) override { _set.erase(key); }
+        void         erase(bool key) override { _set.erase(key); }
         void         clear() override { _set.clear(); }
         void foreach_key_and_value(IVirtualCollection::ForEachElementFn* callback) const override {
             for (auto item : _set) {

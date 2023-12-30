@@ -7,9 +7,16 @@
 #include <memory>  // IWYU pragma: keep
 #include <vector>  // IWYU pragma: keep
 
-struct Dog {
-    std::string _name;
-    Dog(std::string name) : _name(name) { _Log_("Dog {} is created", _name); }
-    ~Dog() { _Log_("Dog {} is destroyed", _name); }
-    std::string name() { return _name; }
+class Dog {
+    inline static unsigned int _totalDogCount = 0;
+    std::string                _name;
+
+public:
+    Dog(std::string name) : _name(name) { _totalDogCount++; }
+    ~Dog() { _totalDogCount--; }
+    std::string         name() { return _name; }
+    static unsigned int totalDogCount() { return _totalDogCount; }
+    static void         resetTotalDogCount() { _totalDogCount = 0; }
 };
+
+Setup { Dog::resetTotalDogCount(); };

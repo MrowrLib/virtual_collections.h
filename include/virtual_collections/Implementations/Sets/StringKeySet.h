@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "../../Interfaces/IVirtualSet.h"
+#include "../../Interfaces/IStringKeySet.h"
 
 namespace VirtualCollections::Sets {
 
@@ -15,7 +15,7 @@ namespace VirtualCollections::Sets {
         unsigned int size() const override { return _set.size(); }
         void         insert(const char* key) override { _set.insert(key); }
         bool contains(const char* key) const override { return _set.find(key) != _set.end(); }
-        void remove(const char* key) override { _set.erase(key); }
+        void erase(const char* key) override { _set.erase(key); }
         void clear() override { _set.clear(); }
         void foreach_key_and_value(IVirtualCollection::ForEachElementFn* callback) const override {
             for (auto& item : _set) {

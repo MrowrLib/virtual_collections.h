@@ -40,6 +40,18 @@ namespace VirtualCollections {
             bools()->insert(key);
         }
 
+        // erasae()
+
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_same<TKey, bool>::value && !std::is_floating_point<TKey>::value &&
+                    !std::is_pointer<TKey>::value,
+                int> = 0>
+        void erase(TKey key) {
+            bools()->erase(key);
+        }
+
         // contains()
 
         bool contains(bool key) { return bools()->contains(key); }
@@ -57,6 +69,16 @@ namespace VirtualCollections {
                 std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
         void insert(TKey key) {
             ints()->insert(key);
+        }
+
+        // erase()
+
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
+        void erase(TKey key) {
+            ints()->erase(key);
         }
 
         // contains()
@@ -93,6 +115,16 @@ namespace VirtualCollections {
             floats()->insert(key);
         }
 
+        // erase()
+
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
+        void erase(TKey key) {
+            floats()->erase(key);
+        }
+
         // contains()
 
         template <typename T, std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
@@ -113,6 +145,10 @@ namespace VirtualCollections {
 
         void insert(const char* key) { strings()->insert(key); }
 
+        // erase()
+
+        void erase(const char* key) { strings()->erase(key); }
+
         // contains()
 
         bool contains(const char* key) { return strings()->contains(key); }
@@ -127,6 +163,13 @@ namespace VirtualCollections {
         template <typename TKey, std::enable_if_t<std::is_pointer<TKey>::value, int> = 0>
         void insert(TKey key) {
             pointers()->insert(key);
+        }
+
+        // erase()
+
+        template <typename TKey, std::enable_if_t<std::is_pointer<TKey>::value, int> = 0>
+        void erase(TKey key) {
+            pointers()->erase(key);
         }
 
         // contains()

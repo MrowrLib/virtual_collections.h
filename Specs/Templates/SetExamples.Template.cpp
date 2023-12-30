@@ -54,6 +54,9 @@ Example("integer key set") {
     set->insert(123);
     AssertThat(set->ints()->size(), Equals(1));
     AssertThat(set->contains(123), IsTrue());
+    set->erase(123);
+    AssertThat(set->ints()->size(), Equals(0));
+    AssertThat(set->contains(123), IsFalse());
 }
 
 Example("floating point key set") {
@@ -64,6 +67,9 @@ Example("floating point key set") {
     set->insert(123.456);
     AssertThat(set->floats()->size(), Equals(1));
     AssertThat(set->contains(123.456), IsTrue());
+    set->erase(123.456);
+    AssertThat(set->floats()->size(), Equals(0));
+    AssertThat(set->contains(123.456), IsFalse());
 }
 
 Example("string key set") {
@@ -74,6 +80,9 @@ Example("string key set") {
     set->insert("hello");
     AssertThat(set->strings()->size(), Equals(1));
     AssertThat(set->contains("hello"), IsTrue());
+    set->erase("hello");
+    AssertThat(set->strings()->size(), Equals(0));
+    AssertThat(set->contains("hello"), IsFalse());
 }
 
 Example("pointer key set") {
@@ -87,4 +96,7 @@ Example("pointer key set") {
     set->insert(ptr);
     AssertThat(set->pointers()->size(), Equals(1));
     AssertThat(set->contains(ptr), IsTrue());
+    set->erase(ptr);
+    AssertThat(set->pointers()->size(), Equals(0));
+    AssertThat(set->contains(ptr), IsFalse());
 }

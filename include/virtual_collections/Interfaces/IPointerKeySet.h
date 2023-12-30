@@ -8,6 +8,6 @@ namespace VirtualCollections::Sets {
         virtual ~IPointerKeySet()              = default;
         virtual void insert(void* key)         = 0;
         virtual bool contains(void* key) const = 0;
-        virtual void remove(void* key)         = 0;
+        virtual void erase(void* key)          = 0;
     };
 }

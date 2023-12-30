@@ -8,6 +8,6 @@ namespace VirtualCollections::Sets {
         virtual ~IIntegralKeySet()           = default;
         virtual void insert(int key)         = 0;
         virtual bool contains(int key) const = 0;
-        virtual void remove(int key)         = 0;
+        virtual void erase(int key)          = 0;
     };
 }

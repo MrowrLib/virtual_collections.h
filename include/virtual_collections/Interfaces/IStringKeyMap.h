@@ -9,6 +9,6 @@ namespace VirtualCollections::Maps {
         virtual void          insert(const char* key, IVoidPointer* value) = 0;
         virtual IVoidPointer* get(const char* key) const                   = 0;
         virtual bool          contains(const char* key) const              = 0;
-        virtual void          remove(const char* key)                      = 0;
+        virtual void          erase(const char* key)                       = 0;
     };
 }

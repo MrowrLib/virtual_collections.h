@@ -18,9 +18,6 @@ Example("templated foreach") {
         values.push_back(value);
     });
 
-    // AssertThat(keys[0], Equals(123));
-    // AssertThat(keys[1], Equals(456));
-
     AssertThat(keys, Has().Exactly(1).EqualTo(123));
     AssertThat(keys, Has().Exactly(1).EqualTo(456));
 
@@ -85,10 +82,16 @@ Example("boolean key map") {
     map->clear();
     AssertThat(map->bools()->size(), Equals(0));
     AssertThat(map->contains(false), IsFalse());
+    AssertThat(Dog::totalDogCount(), Equals(0));
     map->insert(false, new Dog("Rover"));
+    AssertThat(Dog::totalDogCount(), Equals(1));
     AssertThat(map->bools()->size(), Equals(1));
     AssertThat(map->contains(false), IsTrue());
     AssertThat(map->get<Dog*>(false)->name(), Equals("Rover"));
+    map->erase(false);
+    AssertThat(Dog::totalDogCount(), Equals(0));
+    AssertThat(map->bools()->size(), Equals(0));
+    AssertThat(map->contains(false), IsFalse());
 
     // String type
     map->clear();
@@ -115,10 +118,16 @@ Example("integer key map") {
     map->clear();
     AssertThat(map->ints()->size(), Equals(0));
     AssertThat(map->contains(456), IsFalse());
+    AssertThat(Dog::totalDogCount(), Equals(0));
     map->insert(456, new Dog("Rover"));
+    AssertThat(Dog::totalDogCount(), Equals(1));
     AssertThat(map->ints()->size(), Equals(1));
     AssertThat(map->contains(456), IsTrue());
     AssertThat(map->get<Dog*>(456)->name(), Equals("Rover"));
+    map->erase(456);
+    AssertThat(Dog::totalDogCount(), Equals(0));
+    AssertThat(map->ints()->size(), Equals(0));
+    AssertThat(map->contains(456), IsFalse());
 
     // String type
     map->clear();
@@ -142,12 +151,19 @@ Example("floating point key map") {
     AssertThat(map->get<double>(123.456), Equals(456.789));
 
     // Pointer Type
-    AssertThat(map->floats()->size(), Equals(1));
+    map->clear();
+    AssertThat(map->floats()->size(), Equals(0));
     AssertThat(map->contains(456.789), IsFalse());
+    AssertThat(Dog::totalDogCount(), Equals(0));
     map->insert(456.789, new Dog("Rover"));
-    AssertThat(map->floats()->size(), Equals(2));
+    AssertThat(Dog::totalDogCount(), Equals(1));
+    AssertThat(map->floats()->size(), Equals(1));
     AssertThat(map->contains(456.789), IsTrue());
     AssertThat(map->get<Dog*>(456.789)->name(), Equals("Rover"));
+    map->erase(456.789);
+    AssertThat(Dog::totalDogCount(), Equals(0));
+    AssertThat(map->floats()->size(), Equals(0));
+    AssertThat(map->contains(456.789), IsFalse());
 
     // String type
     map->clear();
@@ -174,10 +190,16 @@ Example("string key map") {
     map->clear();
     AssertThat(map->strings()->size(), Equals(0));
     AssertThat(map->contains("hello"), IsFalse());
+    AssertThat(Dog::totalDogCount(), Equals(0));
     map->insert("hello", new Dog("Rover"));
+    AssertThat(Dog::totalDogCount(), Equals(1));
     AssertThat(map->strings()->size(), Equals(1));
     AssertThat(map->contains("hello"), IsTrue());
     AssertThat(map->get<Dog*>("hello")->name(), Equals("Rover"));
+    map->erase("hello");
+    AssertThat(Dog::totalDogCount(), Equals(0));
+    AssertThat(map->strings()->size(), Equals(0));
+    AssertThat(map->contains("hello"), IsFalse());
 
     // String type
     map->clear();
@@ -207,10 +229,16 @@ Example("pointer key map") {
     map->clear();
     AssertThat(map->pointers()->size(), Equals(0));
     AssertThat(map->contains(ptr), IsFalse());
+    AssertThat(Dog::totalDogCount(), Equals(1));
     map->insert(ptr, new Dog("Rover"));
+    AssertThat(Dog::totalDogCount(), Equals(2));
     AssertThat(map->pointers()->size(), Equals(1));
     AssertThat(map->contains(ptr), IsTrue());
     AssertThat(map->get<Dog*>(ptr)->name(), Equals("Rover"));
+    map->erase(ptr);
+    AssertThat(Dog::totalDogCount(), Equals(1));
+    AssertThat(map->pointers()->size(), Equals(0));
+    AssertThat(map->contains(ptr), IsFalse());
 
     // String type
     map->clear();

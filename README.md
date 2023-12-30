@@ -32,6 +32,7 @@ void Example() {
     - [`IVoidPointer` (`void*` with `delete` support)](#ivoidpointer-void-with-delete-support)
     - [`IFunctionPointer` (`virtual` function pointer)](#ifunctionpointer-virtual-function-pointer)
   - [Bring your own containers](#bring-your-own-containers)
+  - [Memory Management and Ownership](#memory-management-and-ownership)
   - [Collections](#collections)
     - [Array](#array)
         - [`VirtualArray()` (_implementation_)](#virtualarray-implementation)
@@ -224,6 +225,10 @@ All you have to do is install one of the following and the containers will be us
 - `robin-hood-hashing`
 
 See `<collections.h>` for more information.
+
+## Memory Management and Ownership
+
+... TODO ...
 
 ## Collections
 

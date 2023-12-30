@@ -8,6 +8,6 @@ namespace VirtualCollections::Sets {
         virtual ~IStringKeySet()                     = default;
         virtual void insert(const char* key)         = 0;
         virtual bool contains(const char* key) const = 0;
-        virtual void remove(const char* key)         = 0;
+        virtual void erase(const char* key)          = 0;
     };
 }

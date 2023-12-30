@@ -74,6 +74,18 @@ namespace VirtualCollections {
             bools()->insert(key, element);
         }
 
+        // erase()
+
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_same<TKey, bool>::value && !std::is_floating_point<TKey>::value &&
+                    !std::is_pointer<TKey>::value,
+                int> = 0>
+        void erase(TKey key) {
+            bools()->erase(key);
+        }
+
         // get()
 
         template <
@@ -173,6 +185,16 @@ namespace VirtualCollections {
             auto* element = new VoidPointer<char>(copy);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             ints()->insert(key, element);
+        }
+
+        // erase()
+
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_integral<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
+        void erase(TKey key) {
+            ints()->erase(key);
         }
 
         // get()
@@ -291,6 +313,16 @@ namespace VirtualCollections {
             floats()->insert(key, element);
         }
 
+        // erase()
+
+        template <
+            typename TKey,
+            std::enable_if_t<
+                std::is_floating_point<TKey>::value && !std::is_same<TKey, bool>::value, int> = 0>
+        void erase(TKey key) {
+            floats()->erase(key);
+        }
+
         // get()
 
         template <
@@ -385,6 +417,10 @@ namespace VirtualCollections {
             strings()->insert(key, element);
         }
 
+        // erase()
+
+        void erase(const char* key) { strings()->erase(key); }
+
         // get()
 
         template <typename TValue, std::enable_if_t<!std::is_pointer<TValue>::value, int> = 0>
@@ -453,6 +489,13 @@ namespace VirtualCollections {
             auto* element = new VoidPointer<char>(copy);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             pointers()->insert(key, element);
+        }
+
+        // erase()
+
+        template <typename TKey, std::enable_if_t<std::is_pointer<TKey>::value, int> = 0>
+        void erase(TKey key) {
+            pointers()->erase(key);
         }
 
         // get()

@@ -21,7 +21,13 @@ namespace VirtualCollections::Maps {
             return it != _map.end() ? it->second : nullptr;
         }
         bool contains(double key) const override { return _map.find(key) != _map.end(); }
-        void remove(double key) override { _map.erase(key); }
+        void erase(double key) override {
+            auto found = _map.find(key);
+            if (found != _map.end()) {
+                delete found->second;
+                _map.erase(found);
+            }
+        }
         void clear() override { _map.clear(); }
         void foreach_key_and_value(IVirtualCollection::ForEachElementFn* callback) const override {
             for (auto& pair : _map) {
