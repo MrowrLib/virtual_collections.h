@@ -37,6 +37,10 @@ namespace VirtualCollections {
             }
             unsigned int size() const { return _set->size(); }
             void         clear() { _set->clear(); }
+
+            void foreach(std::function<void(T)> callback) {
+                _set->foreach([callback](IVoidPointer* value) { callback(value->as<T>()); });
+            }
         };
 
         template <typename T>

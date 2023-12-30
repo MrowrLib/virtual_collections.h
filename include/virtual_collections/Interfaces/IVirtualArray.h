@@ -15,6 +15,25 @@ namespace VirtualCollections {
             bool           _destructable;
 
         public:
+            class Iterator {
+                VirtualTypedArray<T> _array;
+                std::size_t          _index;
+
+            public:
+                Iterator(VirtualTypedArray<T> array, std::size_t index)
+                    : _array(array), _index(index) {}
+                T         operator*() const { return _array.at(_index); }
+                Iterator& operator++() {
+                    ++_index;
+                    return *this;
+                }
+                bool operator==(const Iterator& other) const { return _index == other._index; }
+                bool operator!=(const Iterator& other) const { return !(*this == other); }
+            };
+
+            Iterator begin() { return Iterator(*this, 0); }
+            Iterator end() { return Iterator(*this, _array->size()); }
+
             VirtualTypedArray(IVirtualArray* array, bool destructable = false)
                 : _array(array), _destructable(destructable) {}
 
@@ -24,16 +43,32 @@ namespace VirtualCollections {
 
             T operator[](unsigned int index) const { return _array->at<T>(index); }
 
-            void push(T&& value) { _array->push<T>(std::forward<T>(value)); }
-            void push(T* pointer, bool destructable = true) {
-                _array->push<T>(pointer, destructable);
+            template <
+                typename U = T, typename std::enable_if<!std::is_pointer<U>::value, bool>::type = 0>
+            void push(T&& value) {
+                _array->push<T>(std::forward<T>(value));
             }
+
+            template <
+                typename U = T, typename std::enable_if<std::is_pointer<U>::value, bool>::type = 0>
+            void push(T pointer, bool destructable = true) {
+                auto* element = new VoidPointer(pointer);
+                if (!destructable) element->delete_rule()->disable_destruct_on_delete();
+                _array->push_pointer(element);
+            }
+
+            template <
+                typename U = T, typename std::enable_if<!std::is_pointer<U>::value, bool>::type = 0>
             void insert(unsigned int index, T&& value) {
                 _array->insert<T>(index, std::forward<T>(value));
             }
-            void insert(unsigned int index, T* pointer, bool destructable = true) {
+
+            template <
+                typename U = T, typename std::enable_if<std::is_pointer<U>::value, bool>::type = 0>
+            void insert(unsigned int index, T pointer, bool destructable = true) {
                 _array->insert<T>(index, pointer, destructable);
             }
+
             T    first() const { return _array->first<T>(); }
             T    last() const { return _array->last<T>(); }
             T    at(unsigned int index) const { return _array->at<T>(index); }
@@ -199,14 +234,14 @@ namespace VirtualCollections {
 
         template <typename T>
         void push(T* value, bool destructable = true) {
-            auto* element = new VoidPointer<T>(value);
+            auto* element = new VoidPointer(value);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             this->push_pointer(element);
         }
 
         template <typename T>
         void push(T&& value) {
-            auto* element = new VoidPointer<T>(new T(std::forward<T>(value)));
+            auto* element = new VoidPointer(new T(std::forward<T>(value)));
             this->push_pointer(element);
         }
 
@@ -222,14 +257,14 @@ namespace VirtualCollections {
 
         template <typename T>
         void insert(unsigned int index, T* value, bool destructable = true) {
-            auto* element = new VoidPointer<T>(value);
+            auto* element = new VoidPointer(value);
             if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             this->insert_pointer(index, element);
         }
 
         template <typename T>
         void insert(unsigned int index, T&& value) {
-            auto* element = new VoidPointer<T>(new T(std::forward<T>(value)));
+            auto* element = new VoidPointer(new T(std::forward<T>(value)));
             this->insert_pointer(index, element);
         }
 

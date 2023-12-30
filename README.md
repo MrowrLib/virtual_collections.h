@@ -14,6 +14,10 @@ void Example() {
     array->push("Hello");
     map->insert("Hello", "World");
     set->insert("Hello");
+
+    // Optional type safety
+    auto intArray = array->typed<int>();
+    intArray->push(69);
 }
 ```
 
@@ -69,6 +73,11 @@ void Example() {
       - [`size()`](#size-2)
       - [`clear()`](#clear-2)
       - [`foreach()`](#foreach-2)
+  - [Type Safe Collections](#type-safe-collections)
+    - [Typed Array](#typed-array)
+    - [Typed Map (key only)](#typed-map-key-only)
+    - [Typed Map (key and value)](#typed-map-key-and-value)
+    - [Typed Set](#typed-set)
   - [License](#license)
 
 ## What?
@@ -656,6 +665,55 @@ set.foreach<int>([](int value) {
     // Values as int
 });
 ```
+
+## Type Safe Collections
+
+None of the collections are type safe by default.
+
+You can put anything you want into them and attempt to read anything back out.
+
+If you want type safety, you can use the templated versions of the collections:
+
+- `TypedArray<T>`
+- `TypedMap<TKey>`
+- `TypedMap<TKey, TValue>`
+- `TypedSet<T>`
+
+These classes have the same interface as the non-templated collections, but they are type safe.
+
+There is no abstract base class for the typed collections and you should not store them.
+Instead, store the underlying collection and use `.typed<T>()` to get a typed wrapper as needed.
+
+> Note: these are nothing more than wrappers around the non-templated collections.
+>
+> These require an instance of the non-templated collection to be passed to their constructor.
+>
+> If you destroy the typed collection, the non-templated collection will NOT be destroyed.
+>
+> You can configure the typed collection to delete the underlying collection by passing `true` to the `[collection].typed<T>(bool destructable)` function.
+
+### Typed Array
+
+```cpp
+ITypedArray* untypedArray = new VirtualArray();
+
+// Then, when you want compiler type safety...
+auto array = untypedArray->typed<int>();
+
+// Now, you can use the typed array
+array->push(69);
+
+auto integer = array->at(0); // You do not need to use at<T> to get a typed value
+auto integer = array[0];     // You can also use the [] operator to get a typed value
+
+// You can also use the typed array in a ranged for loop
+```
+
+### Typed Map (key only)
+
+### Typed Map (key and value)
+
+### Typed Set
 
 ## License
 
