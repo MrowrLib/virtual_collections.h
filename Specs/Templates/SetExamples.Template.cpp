@@ -15,9 +15,9 @@ Example("templated foreach") {
 
     set->foreach<int>([&](int item) { items.push_back(item); });
 
-    AssertThat(items[0], Equals(1));
-    AssertThat(items[1], Equals(2));
-    AssertThat(items[2], Equals(3));
+    AssertThat(items, Has().Exactly(1).EqualTo(1));
+    AssertThat(items, Has().Exactly(1).EqualTo(2));
+    AssertThat(items, Has().Exactly(1).EqualTo(3));
 }
 
 Example("foreach IVoidPointer") {
@@ -31,9 +31,9 @@ Example("foreach IVoidPointer") {
 
     set->foreach([&](IVoidPointer* item) { items.push_back(item->as<int>()); });
 
-    AssertThat(items[0], Equals(1));
-    AssertThat(items[1], Equals(2));
-    AssertThat(items[2], Equals(3));
+    AssertThat(items, Has().Exactly(1).EqualTo(1));
+    AssertThat(items, Has().Exactly(1).EqualTo(2));
+    AssertThat(items, Has().Exactly(1).EqualTo(3));
 }
 
 Example("boolean key set") {

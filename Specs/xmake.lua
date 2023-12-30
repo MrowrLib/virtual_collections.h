@@ -3,6 +3,9 @@ add_requires(
     "specs_snowhouse", "vcpkg::snowhouse",
     "specs_libassert", "libassert_latest",
     "_Log_", "spdlog"
+    -- "unordered_dense",
+    -- "parallel-hashmap",
+    -- "robin-hood-hashing"
 )
 
 target("Specs")

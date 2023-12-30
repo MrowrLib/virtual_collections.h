@@ -18,11 +18,14 @@ Example("templated foreach") {
         values.push_back(value);
     });
 
-    AssertThat(keys[0], Equals(123));
-    AssertThat(keys[1], Equals(456));
+    // AssertThat(keys[0], Equals(123));
+    // AssertThat(keys[1], Equals(456));
 
-    AssertThat(values[0], Equals(456.789));
-    AssertThat(values[1], Equals(123.456));
+    AssertThat(keys, Has().Exactly(1).EqualTo(123));
+    AssertThat(keys, Has().Exactly(1).EqualTo(456));
+
+    AssertThat(values, Has().Exactly(1).EqualTo(456.789));
+    AssertThat(values, Has().Exactly(1).EqualTo(123.456));
 }
 
 Example("templated foreach only key type") {
@@ -39,11 +42,11 @@ Example("templated foreach only key type") {
         values.push_back(value->as<double>());
     });
 
-    AssertThat(keys[0], Equals(123));
-    AssertThat(keys[1], Equals(456));
+    AssertThat(keys, Has().Exactly(1).EqualTo(123));
+    AssertThat(keys, Has().Exactly(1).EqualTo(456));
 
-    AssertThat(values[0], Equals(456.789));
-    AssertThat(values[1], Equals(123.456));
+    AssertThat(values, Has().Exactly(1).EqualTo(456.789));
+    AssertThat(values, Has().Exactly(1).EqualTo(123.456));
 }
 
 Example("foreach IVoidPointer") {
@@ -60,11 +63,11 @@ Example("foreach IVoidPointer") {
         values.push_back(value->as<double>());
     });
 
-    AssertThat(keys[0], Equals(123));
-    AssertThat(keys[1], Equals(456));
+    AssertThat(keys, Has().Exactly(1).EqualTo(123));
+    AssertThat(keys, Has().Exactly(1).EqualTo(456));
 
-    AssertThat(values[0], Equals(456.789));
-    AssertThat(values[1], Equals(123.456));
+    AssertThat(values, Has().Exactly(1).EqualTo(456.789));
+    AssertThat(values, Has().Exactly(1).EqualTo(123.456));
 }
 
 Example("boolean key map") {

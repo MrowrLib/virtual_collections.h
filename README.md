@@ -45,6 +45,7 @@ void Example() {
   - [Supported Types](#supported-types)
     - [`IVoidPointer` (`void*` with `delete` support)](#ivoidpointer-void-with-delete-support)
     - [`IFunctionPointer` (`virtual` function pointer)](#ifunctionpointer-virtual-function-pointer)
+  - [Bring your own containers](#bring-your-own-containers)
   - [Collections](#collections)
     - [Array](#array)
         - [`VirtualArray()` (_implementation_)](#virtualarray-implementation)
@@ -221,6 +222,22 @@ The low-level `foreach*` functions take `IFunctionPointer*` callbacks as argumen
 Like `IVoidPointer`, you will likely not interact with `IFunctionPointer` directly, but it is used internally by the collections.
 
 You can use the higher-level `foreach*` functions which take `std::function` callbacks (_which safely use `IFunctionPointer` internally for safe cross-DLL callbacks_).
+
+## Bring your own containers
+
+`<virtual_collections.h>` uses the `<collections.h>` library which allows for your to bring your own containers.
+
+> **`<collections.h>`**`
+>
+> https://github.com/MrowrLib/collections.h
+
+All you have to do is install one of the following and the containers will be used instead of the `std::` ones:
+
+- `unordered_dense` (_recommended_)
+- `parallel-hashmap`
+- `robin-hood-hashing`
+
+See `<collections.h>` for more information.
 
 ## Collections
 
@@ -498,7 +515,7 @@ By default, `VirtualSet()` is an alias for `VirtualConstSet()`.
 
 It provides this at the cost of pre-allocating its underlying containers.
 
-> `VirtualSet` (`const` and _lazy_) use 5x internal `unordered_map` containers to store values (_of different types: bool, int, double, string, pointer_).
+> `VirtualSet` (`const` and _lazy_) use 5x internal `unordered_set` containers to store values (_of different types: bool, int, double, string, pointer_).
 >
 > The default `VirtualSet` (`VirtualConstSet`) pre-initializes these containers.
 
