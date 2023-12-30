@@ -60,6 +60,7 @@ void Example() {
       - [`foreach()`](#foreach)
     - [Map](#map)
       - [`VirtualMap()` (_implementation_)](#virtualmap-implementation)
+        - [`VirtualConstMap()` and `VirtualLazyMap()`](#virtualconstmap-and-virtuallazymap)
       - [`insert()`](#insert-1)
       - [`get()`](#get)
       - [`contains()`](#contains)
@@ -68,6 +69,7 @@ void Example() {
       - [`foreach()`](#foreach-1)
     - [Set](#set)
       - [`VirtualSet()` (_implementation_)](#virtualset-implementation)
+        - [`VirtualConstSet()` and `VirtualLazySet()`](#virtualconstset-and-virtuallazyset)
       - [`insert()`](#insert-2)
       - [`contains()`](#contains-1)
       - [`size()`](#size-2)
@@ -372,6 +374,28 @@ array.foreach<int>([](int item) {
 VirtualMap map;
 ```
 
+##### `VirtualConstMap()` and `VirtualLazyMap()`
+
+By default, `VirtualMap()` is an alias for `VirtualConstMap()`.
+
+`VirtualConstMap` provides `const` functions for lookup:
+
+- `get()`
+- `contains()`
+
+It provides this at the cost of pre-allocating its underlying containers.
+
+> `VirtualMap` (`const` and _lazy_) use 5x internal `unordered_map` containers to store values (_of different types: bool, int, double, string, pointer_).
+>
+> The default `VirtualMap` (`VirtualConstMap`) pre-initializes these containers.
+
+`VirtualLazyMap` does NOT pre-allocate its underlying containers.
+
+This comes at the cost of NOT supporting `const` lookups:
+
+- `get()` ~ _only the non-`const` overload works, the `const` will return a `nullptr`_
+- `contains()` ~ _only the non-`const` overload works, the `const` will return a `nullptr`_
+
 #### `insert()`
 
 ```cpp
@@ -463,6 +487,26 @@ map.foreach<bool, int>([](bool key, int value) {
 
 VirtualSet set;
 ```
+
+##### `VirtualConstSet()` and `VirtualLazySet()`
+
+By default, `VirtualSet()` is an alias for `VirtualConstSet()`.
+
+`VirtualConstSet` provides `const` functions for lookup:
+
+- `contains()`
+
+It provides this at the cost of pre-allocating its underlying containers.
+
+> `VirtualSet` (`const` and _lazy_) use 5x internal `unordered_map` containers to store values (_of different types: bool, int, double, string, pointer_).
+>
+> The default `VirtualSet` (`VirtualConstSet`) pre-initializes these containers.
+
+`VirtualLazySet` does NOT pre-allocate its underlying containers.
+
+This comes at the cost of NOT supporting `const` lookups:
+
+- `contains()` ~ _only the non-`const` overload works, the `const` will return a `nullptr`_
 
 #### `insert()`
 
