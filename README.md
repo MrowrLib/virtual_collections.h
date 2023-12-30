@@ -185,9 +185,9 @@ Collections support the following types:
 
 ### `IVoidPointer` (`void*` with `delete` support)
 
-Containers store most items wrapped in a `IVoidPointer` which is a `void*` with `delete` support.
+Array and Map containers store element values wrapped in a `IVoidPointer` which is a `void*` with `delete` support.
 
-> **`<void_pointer.h>`**`
+> **`<void_pointer.h>`**
 >
 > https://github.com/MrowrLib/void_pointer.h
 
