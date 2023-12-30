@@ -134,7 +134,7 @@ tarat_link_libraries(Example PRIVATE virtual_collections::virtual_collections)
         {
             "kind": "git",
             "repository": "https://github.com/MrowrLib/Packages.git",
-            "baseline": "9cedd6feb2db59d64d0a4d757f778b9cd390eebf",
+            "baseline": "db437bd66976eac282b57cb2068f32351a7373de",
             "packages": [
                 "mrowr-virtual-collections",
                 "mrowr-void-pointer",
