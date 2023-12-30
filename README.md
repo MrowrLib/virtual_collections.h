@@ -33,6 +33,9 @@ void Example() {
     - [`IFunctionPointer` (`virtual` function pointer)](#ifunctionpointer-virtual-function-pointer)
   - [Bring your own containers](#bring-your-own-containers)
   - [Memory Management and Ownership](#memory-management-and-ownership)
+    - [Configuring Value Ownership](#configuring-value-ownership)
+      - [`IVirtualArray.push(value, destructable = true)`](#ivirtualarraypushvalue-destructable--true)
+      - [`IVirtualMap.insert(key, value, destructable = true)`](#ivirtualmapinsertkey-value-destructable--true)
   - [Collections](#collections)
     - [Array](#array)
         - [`VirtualArray()` (_implementation_)](#virtualarray-implementation)
@@ -228,7 +231,62 @@ See `<collections.h>` for more information.
 
 ## Memory Management and Ownership
 
-... TODO ...
+Any pointers added as the following will be owned by the collection:
+
+- Pointers added to `IVirtualArray`
+- Pointers added to `IVirtualMap` as **values**
+  
+`VirtualSet` and `VirtualMap` do not take ownership of **key** pointers:
+
+```cpp
+auto pointerKey = new Dog();
+
+VirtualArray array;
+array.push(pointerKey); // array DOES own pointerKey
+
+VirtualSet set;
+set.insert(pointerKey); // set does NOT own pointerKey
+
+VirtualMap map;
+map.insert(pointerKey, "Dog"); // map does NOT own pointerKey
+map.insert("Pointer as value", pointerKey); // map DOES own pointerKey
+```
+
+By default, the following will `delete` an owned pointer:
+
+- Calling `clear()` on any collection
+- Destroying an element via `remove()` (`IVirtualArray`) or `erase()` (`IVirtualMap`)
+
+### Configuring Value Ownership
+
+What if you want to store a pointer in a `IVirtualArray` or as the **value**
+in a `IVirtualMap` but you don't want the collection to own it?
+
+#### `IVirtualArray.push(value, destructable = true)`
+
+Whenever you add a raw pointer to a `IVirtualArray`, you can specify whether or not the collection should own it.
+
+```cpp
+auto* pointer = new Dog();
+
+VirtualArray array;
+
+array.push(pointer); // array DOES own pointer
+array.push(pointer, false); // array does NOT own pointer
+```
+
+#### `IVirtualMap.insert(key, value, destructable = true)`
+
+Whenever you add a raw pointer to a `IVirtualMap` as the **value**, you can specify whether or not the collection should own it.
+
+```cpp
+auto* pointer = new Dog();
+
+VirtualMap map;
+
+map.insert("Dog", pointer); // map DOES own pointer
+map.insert("Dog", pointer, false); // map does NOT own pointer
+```
 
 ## Collections
 
