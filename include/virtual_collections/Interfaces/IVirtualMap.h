@@ -14,6 +14,104 @@ namespace VirtualCollections {
     struct IVirtualMap : public virtual IVirtualCollection {
         virtual ~IVirtualMap() = default;
 
+        template <typename TKey, typename TValue>
+        class VirtualTypedMap {
+            IVirtualMap* _map;
+            bool         _destructable;
+
+        public:
+            VirtualTypedMap(IVirtualMap* map, bool destructable = false)
+                : _map(map), _destructable(destructable) {}
+
+            ~VirtualTypedMap() {
+                if (_destructable) delete _map;
+            }
+
+            TValue operator[](TKey key) const { return _map->get<TValue>(key); }
+
+            void insert(TKey key, TValue&& value) {
+                _map->insert(key, std::forward<TValue>(value));
+            }
+            void insert(TKey key, TValue* pointer, bool destructable = true) {
+                _map->insert(key, pointer, destructable);
+            }
+            void insert(TKey key, const char* value, bool destructable = true) {
+                _map->insert(key, value, destructable);
+            }
+            void         erase(TKey key) { _map->erase(key); }
+            bool         contains(TKey key) const { return _map->contains(key); }
+            unsigned int size() const { return _map->size(); }
+            void         clear() { _map->clear(); }
+
+            void foreach(std::function<void(TKey, TValue)> callback) {
+                _map->foreach([&](IVoidPointer* key, IVoidPointer* value) {
+                    callback(key->as<TKey>(), value->as<TValue>());
+                });
+            }
+
+            void foreach(std::function<void(TValue)> callback) {
+                _map->foreach([&](IVoidPointer* value) { callback(value->as<TValue>()); });
+            }
+        };
+
+        template <typename TKey>
+        class VirtualKeyTypedMap {
+            IVirtualMap* _map;
+            bool         _destructable;
+
+        public:
+            VirtualKeyTypedMap(IVirtualMap* map, bool destructable = false)
+                : _map(map), _destructable(destructable) {}
+
+            ~VirtualKeyTypedMap() {
+                if (_destructable) delete _map;
+            }
+
+            template <typename TValue>
+            void insert(TKey key, TValue&& value) {
+                _map->insert(key, std::forward<TValue>(value));
+            }
+            template <typename TValue>
+            void insert(TKey key, TValue* pointer, bool destructable = true) {
+                _map->insert(key, pointer, destructable);
+            }
+            template <typename TValue>
+            TValue get(TKey key) {
+                return _map->get<TValue>(key);
+            }
+            template <typename TValue>
+            TValue get(TKey key) const {
+                return _map->get<TValue>(key);
+            }
+            void         erase(TKey key) { _map->erase(key); }
+            bool         contains(TKey key) const { return _map->contains(key); }
+            unsigned int size() const { return _map->size(); }
+            void         clear() { _map->clear(); }
+
+            void foreach(std::function<void(TKey, IVoidPointer*)> callback) {
+                _map->foreach([&](IVoidPointer* key, IVoidPointer*) {
+                    callback(key->as<TKey>(), key);
+                });
+            }
+
+            template <typename TValue>
+            void foreach(std::function<void(TKey, TValue)> callback) {
+                _map->foreach([&](IVoidPointer* key, IVoidPointer* value) {
+                    callback(key->as<TKey>(), value->as<TValue>());
+                });
+            }
+        };
+
+        template <typename TKey, typename TValue>
+        VirtualTypedMap<TKey, TValue> typed(bool destructable = false) {
+            return VirtualTypedMap<TKey, TValue>(this, destructable);
+        }
+
+        template <typename TKey>
+        VirtualKeyTypedMap<TKey> typed(bool destructable = false) {
+            return VirtualKeyTypedMap<TKey>(this, destructable);
+        }
+
         virtual Maps::IBooleanKeyMap*       bools()    = 0;
         virtual Maps::IIntegralKeyMap*      ints()     = 0;
         virtual Maps::IFloatingPointKeyMap* floats()   = 0;

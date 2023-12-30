@@ -1,5 +1,7 @@
 #define SPEC_TEMPLATE Array_Examples
 
+// TODO: test memory management via: erase(i), erase(i, count), clear(), destructor
+
 #include <virtual_collections/virtual_array.h>
 
 #include "SpecHelper.h"  // IWYU pragma: keep

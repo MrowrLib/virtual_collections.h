@@ -1,5 +1,7 @@
 #define SPEC_TEMPLATE Map_Examples
 
+// TODO: test memory management via: erase(i), clear(), destructor
+
 #include <virtual_collections/virtual_map.h>
 
 #include "SpecHelper.h"  // IWYU pragma: keep

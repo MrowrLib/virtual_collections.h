@@ -12,6 +12,38 @@ namespace VirtualCollections {
     struct IVirtualSet : public IVirtualCollection {
         virtual ~IVirtualSet() = default;
 
+        template <typename T>
+        class VirtualTypedSet {
+            IVirtualSet* _set;
+            bool         _destructable;
+
+        public:
+            VirtualTypedSet(IVirtualSet* set, bool destructable = false)
+                : _set(set), _destructable(destructable) {}
+
+            ~VirtualTypedSet() {
+                if (_destructable) delete _set;
+            }
+
+            void insert(T&& value) { _set->insert(std::forward<T>(value)); }
+            void insert(T* pointer, bool destructable = true) {
+                _set->insert(pointer, destructable);
+            }
+            void erase(T&& value) { _set->erase(std::forward<T>(value)); }
+            void erase(T* pointer, bool destructable = true) { _set->erase(pointer, destructable); }
+            bool contains(T&& value) { return _set->contains(std::forward<T>(value)); }
+            bool contains(T* pointer, bool destructable = true) {
+                return _set->contains(pointer, destructable);
+            }
+            unsigned int size() const { return _set->size(); }
+            void         clear() { _set->clear(); }
+        };
+
+        template <typename T>
+        VirtualTypedSet<T> typed(bool destructable = false) {
+            return VirtualTypedSet<T>(this, destructable);
+        }
+
         virtual Sets::IBooleanKeySet*       bools()    = 0;
         virtual Sets::IIntegralKeySet*      ints()     = 0;
         virtual Sets::IFloatingPointKeySet* floats()   = 0;

@@ -10,6 +10,10 @@ namespace VirtualCollections {
         std::vector<IVoidPointer*> _elements;
 
     public:
+        ~VirtualArray() override {
+            for (auto& element : _elements) delete element;
+        }
+
         unsigned int size() const override { return _elements.size(); }
 
         void foreach_key_and_value(ForEachElementFn* callback) const override {
@@ -27,7 +31,6 @@ namespace VirtualCollections {
             for (size_t i = 0; i < _elements.size(); ++i) callback->invoke(i, _elements[i]);
         }
 
-        // TODO: bring back the regular prt = at()
         IVoidPointer* at(unsigned int index) const override {
             if (index < _elements.size()) return _elements[index];
             return nullptr;
@@ -51,14 +54,22 @@ namespace VirtualCollections {
         }
 
         void erase(unsigned int index) override {
-            if (index < _elements.size()) _elements.erase(_elements.begin() + index);
+            if (index < _elements.size()) {
+                delete _elements[index];
+                _elements.erase(_elements.begin() + index);
+            }
         }
 
         void erase(unsigned int index, unsigned int count) override {
-            if (index < _elements.size())
+            if (index < _elements.size()) {
+                for (unsigned int i = 0; i < count; ++i) delete _elements[index + i];
                 _elements.erase(_elements.begin() + index, _elements.begin() + index + count);
+            }
         }
 
-        void clear() override { _elements.clear(); }
+        void clear() override {
+            for (auto& element : _elements) delete element;
+            _elements.clear();
+        }
     };
 }

@@ -9,6 +9,52 @@ namespace VirtualCollections {
     struct IVirtualArray : public virtual IVirtualCollection {
         using ForEachIndexAndElementFn = IFunctionPointer<void(unsigned int, IVoidPointer*)>;
 
+        template <typename T>
+        class VirtualTypedArray {
+            IVirtualArray* _array;
+            bool           _destructable;
+
+        public:
+            VirtualTypedArray(IVirtualArray* array, bool destructable = false)
+                : _array(array), _destructable(destructable) {}
+
+            ~VirtualTypedArray() {
+                if (_destructable) delete _array;
+            }
+
+            T operator[](unsigned int index) const { return _array->at<T>(index); }
+
+            void push(T&& value) { _array->push<T>(std::forward<T>(value)); }
+            void push(T* pointer, bool destructable = true) {
+                _array->push<T>(pointer, destructable);
+            }
+            void insert(unsigned int index, T&& value) {
+                _array->insert<T>(index, std::forward<T>(value));
+            }
+            void insert(unsigned int index, T* pointer, bool destructable = true) {
+                _array->insert<T>(index, pointer, destructable);
+            }
+            T    first() const { return _array->first<T>(); }
+            T    last() const { return _array->last<T>(); }
+            T    at(unsigned int index) const { return _array->at<T>(index); }
+            void erase(unsigned int index) { _array->erase(index); }
+            void erase(unsigned int index, unsigned int count) { _array->erase(index, count); }
+            unsigned int size() const { return _array->size(); }
+            void         clear() { _array->clear(); }
+
+            void foreach(std::function<void(T)> callback) {
+                for (auto element : _array->iterable<T>()) callback(element);
+            }
+
+            void foreach(std::function<void(unsigned int, T)> callback) {
+                unsigned int index = 0;
+                for (auto element : _array->iterable<T>()) {
+                    callback(index, element);
+                    ++index;
+                }
+            }
+        };
+
         class Iterator {
             IVirtualArray* _array;
             unsigned int   _index;
@@ -70,6 +116,11 @@ namespace VirtualCollections {
         template <typename T>
         TemplatedIterable<T> iterable() {
             return TemplatedIterable<T>(this);
+        }
+
+        template <typename T>
+        VirtualTypedArray<T> typed(bool destructable = false) {
+            return VirtualTypedArray<T>(this, destructable);
         }
 
         virtual void push_pointer(IVoidPointer*)                       = 0;
@@ -154,9 +205,8 @@ namespace VirtualCollections {
         }
 
         template <typename T>
-        void push(T&& value, bool destructable = true) {
+        void push(T&& value) {
             auto* element = new VoidPointer<T>(new T(std::forward<T>(value)));
-            if (!destructable) element->delete_rule()->disable_destruct_on_delete();
             this->push_pointer(element);
         }
 

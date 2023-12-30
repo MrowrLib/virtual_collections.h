@@ -360,7 +360,9 @@ array.insert(4, new Dog()); // pointer
 #### `erase()`
 
 ```cpp
-array.erase(0);
+array.erase(0); // erase element at index 0
+
+array.erase(0, 2); // erase 2 elements starting at index 0
 ```
 
 #### ranged `for` loop
