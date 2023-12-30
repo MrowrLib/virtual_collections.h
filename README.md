@@ -1,17 +1,3 @@
-```
-TODO
-
-Add Const versions of every collection.
-
-Lazy and const.
-
-Const support const get() functions!
-
-The current ones don't due to lazy initialization of underlying containers.
-```
-
----
-
 # `#include <virtual_collections.h>`
 
 ```cpp
