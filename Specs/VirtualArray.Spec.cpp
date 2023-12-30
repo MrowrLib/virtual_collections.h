@@ -38,6 +38,23 @@ Example("templated range based loop") {
     AssertThat(values[2], Equals(789));
 }
 
+Example("range based loop over pointers") {
+    std::vector<Dog*> values;
+
+    auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
+
+    array->push(new Dog("Fido"));
+    array->push(new Dog("Rex"));
+    array->push(new Dog("Spot"));
+
+    for (auto* dog : array->iterable<Dog*>()) values.push_back(dog);
+
+    AssertThat(values.size(), Equals(3));
+    AssertThat(values[0]->name(), Equals("Fido"));
+    AssertThat(values[1]->name(), Equals("Rex"));
+    AssertThat(values[2]->name(), Equals("Spot"));
+}
+
 Example("boolean value array") {
     auto array = std::unique_ptr<IVirtualArray>(new VirtualArray());
 
