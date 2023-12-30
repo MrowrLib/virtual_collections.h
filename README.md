@@ -29,6 +29,7 @@ void Example() {
   - [Why?](#why)
   - [How?](#how)
   - [Supported Types](#supported-types)
+    - [`bool`, `int`, `double`, `const char*`, `void*`](#bool-int-double-const-char-void)
     - [`IVoidPointer` (`void*` with `delete` support)](#ivoidpointer-void-with-delete-support)
     - [`IFunctionPointer` (`virtual` function pointer)](#ifunctionpointer-virtual-function-pointer)
   - [Bring your own containers](#bring-your-own-containers)
@@ -170,10 +171,12 @@ The collections only support types which are natively safe to use across DLL bou
 
 > _No custom `dllexport` types are supported._
 
+### `bool`, `int`, `double`, `const char*`, `void*`
+
 Collections support the following types:
 
 - Boolean
-- Integral types (`int`, `unsigned int`, ...) - _stored as `int`_
+- Integral types (`int`, `unsigned int`, `uint8_t`, ...) - _stored as `int`_
 - Floating point types (`float`, `double`, ...) - _stored as `double`_
 - C style strings (`const char*`) - _stored as `std::string`_
 - Pointers - _stored as `void*`_
