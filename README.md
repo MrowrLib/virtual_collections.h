@@ -47,7 +47,7 @@ void Example() {
     - [`IFunctionPointer` (`virtual` function pointer)](#ifunctionpointer-virtual-function-pointer)
   - [Collections](#collections)
     - [Array](#array)
-        - [`VirtualArray` (_implementation_)](#virtualarray-implementation)
+        - [`VirtualArray()` (_implementation_)](#virtualarray-implementation)
       - [`push()`](#push)
       - [`at()`](#at)
       - [`first()` / `last()`](#first--last)
@@ -56,9 +56,8 @@ void Example() {
       - [`insert()`](#insert)
       - [`erase()`](#erase)
       - [ranged `for` loop](#ranged-for-loop)
-    - [Map](#map)
-    - [Set](#set)
-  - [License](#license)
+        - [templated `for` loop (`iterable<T>`)](#templated-for-loop-iterablet)
+      - [`foreach()`](#foreach)
 
 
 ## What?
@@ -210,7 +209,7 @@ You can use the higher-level `foreach*` functions which take `std::function` cal
 
 ### Array
 
-##### `VirtualArray` (_implementation_)
+##### `VirtualArray()` (_implementation_)
 
 ```cpp
 #include <virtual_collections.h>
@@ -281,9 +280,72 @@ array.erase(0);
 Using a `for` loop directly on the `IVirtualArray` will loop over items as `IVoidPointer` (_which is how they are stored_).
 
 ```cpp
-for (auto& item : array) {
-    // ...
+for (auto* item : *array) {
+    bool       boolean       = item->as<bool>();
+    int        integer       = item->as<int>();
+    double     floatingPoint = item->as<double>();
+    const char string        = item->as<const char*>();
+    Dog*       pointer       = item->as<Dog*>();
 }
+```
+
+##### templated `for` loop (`iterable<T>`)
+
+If you want to loop over items as their original type, you can use `iterable<T>`.
+
+```cpp
+for (auto number : array.iterable<int>()) {
+    // Here, this int value is a copy of the original value
+    // Under the hood .iterable<int> becomes IVoidPointer.as<int>
+}
+
+for (auto* dog : array.iterable<Dog*>()) {
+    // Here, we get a pointer to the original value
+    // Under the hood .iterable<Dog*> becomes IVoidPointer.as<Dog*>
+}
+```
+
+#### `foreach()`
+
+Various `foreach()` functions are provided which take a `std::function` callback:
+
+Get the index and value (_as `IVoidPointer*`_):
+- `foreach(std::function<void(unsigned int, IVoidPointer*)> callback)`
+
+Get the value (_as `IVoidPointer*`_):
+- `foreach_value(std::function<void(IVoidPointer*)> callback)`
+
+Get the index and value (_as specified type_):
+- `foreach(std::function<void(unsigned int, T)> callback)`
+
+Get the value (_as specified type_):
+- `foreach_value(std::function<void(T)> callback)`
+
+```cpp
+array.foreach([](unsigned int index, IVoidPointer* item) {
+    bool       boolean       = item->as<bool>();
+    int        integer       = item->as<int>();
+    double     floatingPoint = item->as<double>();
+    const char string        = item->as<const char*>();
+    Dog*       pointer       = item->as<Dog*>();
+});
+
+array.foreach_value([](IVoidPointer* item) {
+    bool       boolean       = item->as<bool>();
+    int        integer       = item->as<int>();
+    double     floatingPoint = item->as<double>();
+    const char string        = item->as<const char*>();
+    Dog*       pointer       = item->as<Dog*>();
+});
+
+array.foreach<int>([](unsigned int index, int item) {
+    // ...
+});
+
+array.foreach<int>([](int item) {
+    // ...
+});
+```
 ```
 
 ### Map
