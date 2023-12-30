@@ -227,7 +227,7 @@ You can use the higher-level `foreach*` functions which take `std::function` cal
 
 `<virtual_collections.h>` uses the `<collections.h>` library which allows for your to bring your own containers.
 
-> **`<collections.h>`**`
+> **`<collections.h>`**
 >
 > https://github.com/MrowrLib/collections.h
 
