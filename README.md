@@ -97,7 +97,7 @@ add_requires("virtual_collections")
 -- C++17 and above
 set_languages("c++17")
 
-tarat("Example")
+target("Example")
     add_packages("virtual_collections")
 ```
 
