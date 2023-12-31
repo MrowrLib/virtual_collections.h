@@ -1,7 +1,7 @@
 #pragma once
 
 #include <function_pointer.h>
-#include <void_pointer.h>
+#include <void_pointer/deprecated.h>
 
 #include <functional>
 
