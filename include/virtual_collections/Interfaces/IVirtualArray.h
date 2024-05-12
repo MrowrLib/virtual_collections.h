@@ -65,7 +65,8 @@ namespace VirtualCollections {
 
             template <typename... Args>
             void emplace(Args&&... args) {
-                _array->push<T>(new T(std::forward<Args>(args)...));
+                _array->push(new typename std::remove_pointer<T>::type(std::forward<Args>(args)...)
+                );
             }
 
             template <
