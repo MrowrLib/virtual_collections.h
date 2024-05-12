@@ -63,6 +63,11 @@ namespace VirtualCollections {
                 _array->insert<T>(index, std::forward<T>(value));
             }
 
+            template <typename... Args>
+            void emplace(Args&&... args) {
+                _array->push<T>(new T(std::forward<Args>(args)...));
+            }
+
             template <
                 typename U = T, typename std::enable_if<std::is_pointer<U>::value, bool>::type = 0>
             void insert(unsigned int index, T pointer, bool destructable = true) {
