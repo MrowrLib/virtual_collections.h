@@ -8,7 +8,7 @@ void Example() {
     // that can be shared across DLL boundaries
     IVirtualArray* array = new VirtualArray();
     IVirtualMap*   map   = new VirtualMap();
-    IVirtualSet*   set   = new Virtualinsert();
+    IVirtualSet*   set   = new VirtualSet();
 
     // The collections provide most of the functionality you'd expect
     array->push("Hello");
