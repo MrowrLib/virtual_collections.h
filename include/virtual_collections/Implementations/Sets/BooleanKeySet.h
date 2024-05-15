@@ -4,10 +4,20 @@
 
 #include "../../Interfaces/IBooleanKeySet.h"
 
+// Unordered Dense doesn't like <bool>, so fall back to the STL implementation
+#if __has_include(<ankerl/unordered_dense.h>)
+    #include <unordered_set>
+#endif
+
 namespace VirtualCollections::Sets {
 
     class BooleanKeySet : public IBooleanKeySet {
+#if __has_include(<ankerl/unordered_dense.h>)
+        // Unordered Dense doesn't like <bool>, so fall back to the STL implementation
+        std::unordered_set<bool> _set;
+#else
         collections_set<bool> _set;
+#endif
 
     public:
         unsigned int size() const override { return _set.size(); }
