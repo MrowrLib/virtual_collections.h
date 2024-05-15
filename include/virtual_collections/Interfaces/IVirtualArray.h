@@ -57,22 +57,26 @@ namespace VirtualCollections {
                 _array->push_pointer(element);
             }
 
+            void push(const char* value) { _array->push(value); }
+
             template <
                 typename U = T, typename std::enable_if<!std::is_pointer<U>::value, bool>::type = 0>
             void insert(unsigned int index, T&& value) {
                 _array->insert<T>(index, std::forward<T>(value));
             }
 
-            template <typename... Args>
-            void emplace(Args&&... args) {
-                _array->push(new typename std::remove_pointer<T>::type(std::forward<Args>(args)...)
-                );
-            }
-
             template <
                 typename U = T, typename std::enable_if<std::is_pointer<U>::value, bool>::type = 0>
             void insert(unsigned int index, T pointer, bool destructable = true) {
                 _array->insert<T>(index, pointer, destructable);
+            }
+
+            void insert(unsigned int index, const char* value) { _array->insert(index, value); }
+
+            template <typename... Args>
+            void emplace(Args&&... args) {
+                _array->push(new typename std::remove_pointer<T>::type(std::forward<Args>(args)...)
+                );
             }
 
             T    first() const { return _array->first<T>(); }

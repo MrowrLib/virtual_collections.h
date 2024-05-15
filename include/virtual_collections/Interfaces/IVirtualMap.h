@@ -35,9 +35,8 @@ namespace VirtualCollections {
             void insert(TKey key, TValue* pointer, bool destructable = true) {
                 _map->insert(key, pointer, destructable);
             }
-            void insert(TKey key, const char* value, bool destructable = true) {
-                _map->insert(key, value, destructable);
-            }
+            void insert(TKey key, const char* value) { _map->insert(key, value); }
+
             void         erase(TKey key) { _map->erase(key); }
             bool         contains(TKey key) const { return _map->contains(key); }
             unsigned int size() const { return _map->size(); }

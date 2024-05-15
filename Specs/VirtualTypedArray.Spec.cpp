@@ -119,3 +119,18 @@ Example("range based for loop with pointer values") {
     AssertThat(values[1]->name(), Equals("Rex"));
     AssertThat(values[2]->name(), Equals("Lassie"));
 }
+
+Example("strings") {
+    VirtualArray untyped;
+
+    auto array = untyped.typed<const char*>();
+
+    array.push("one");
+    array.push("two");
+    array.push("three");
+
+    AssertThat(array.size(), Equals(3));
+    AssertThat(array[0], Equals("one"));
+    AssertThat(array[1], Equals("two"));
+    AssertThat(array[2], Equals("three"));
+}

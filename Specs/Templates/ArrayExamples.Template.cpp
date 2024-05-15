@@ -220,10 +220,13 @@ Example("floating point value array") {
 Example("string value array") {
     auto* array = current_test->var<IVirtualArray*>("array");
 
+    std::string str{"Hello"};
+
     // push() and at() and size()
     AssertThat(array->size(), Equals(0));
     AssertThat(array->at<const char*>(0), Equals(""));  // Default value
-    array->push("Hello");
+    // array->push("Hello");
+    array->push(str.c_str());
     AssertThat(array->size(), Equals(1));
     AssertThat(array->at<const char*>(0), Equals("Hello"));
 
